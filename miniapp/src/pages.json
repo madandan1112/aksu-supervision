@@ -1,0 +1,64 @@
+{
+  "pages": [
+    { "path": "pages/index/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/appeal/list", "style": { "navigationBarTitleText": "诉求管理" } },
+    { "path": "pages/appeal/create", "style": { "navigationBarTitleText": "新建诉求" } },
+    { "path": "pages/appeal/detail", "style": { "navigationBarTitleText": "诉求详情" } },
+    { "path": "pages/enterprise/profile", "style": { "navigationBarTitleText": "企业信息" } },
+    { "path": "pages/enterprise/contacts", "style": { "navigationBarTitleText": "联系人管理" } },
+    { "path": "pages/rectification/list", "style": { "navigationBarTitleText": "整改通知" } },
+    { "path": "pages/rectification/detail", "style": { "navigationBarTitleText": "整改详情" } },
+    { "path": "pages/rectification/feedback", "style": { "navigationBarTitleText": "提交反馈" } },
+    { "path": "pages/rectification/result", "style": { "navigationBarTitleText": "验收结果" } },
+    { "path": "pages/report/list", "style": { "navigationBarTitleText": "合规报告" } },
+    { "path": "pages/report/upload", "style": { "navigationBarTitleText": "上传报告" } },
+    { "path": "pages/report/detail", "style": { "navigationBarTitleText": "报告详情" } },
+    { "path": "pages/equipment/list", "style": { "navigationBarTitleText": "设备台账" } },
+    { "path": "pages/equipment/add", "style": { "navigationBarTitleText": "添加设备" } },
+    { "path": "pages/equipment/report", "style": { "navigationBarTitleText": "状态上报" } },
+    { "path": "pages/equipment/history", "style": { "navigationBarTitleText": "上报记录" } },
+    { "path": "pages/message/list", "style": { "navigationBarTitleText": "消息中心" } },
+    { "path": "pages/message/detail", "style": { "navigationBarTitleText": "消息详情" } },
+    { "path": "pages/ocr/index", "style": { "navigationBarTitleText": "OCR识别" } },
+    { "path": "pages/scan/index", "style": { "navigationBarTitleText": "扫码查询" } },
+    { "path": "pages/login/index", "style": { "navigationStyle": "custom" } }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "监管平台",
+    "navigationBarBackgroundColor": "#1A73E8",
+    "backgroundColor": "#F5F6FA"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1A73E8",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tab_home.png",
+        "selectedIconPath": "static/tab_home_active.png"
+      },
+      {
+        "pagePath": "pages/appeal/list",
+        "text": "诉求",
+        "iconPath": "static/tab_appeal.png",
+        "selectedIconPath": "static/tab_appeal_active.png"
+      },
+      {
+        "pagePath": "pages/rectification/list",
+        "text": "检查",
+        "iconPath": "static/tab_check.png",
+        "selectedIconPath": "static/tab_check_active.png"
+      },
+      {
+        "pagePath": "pages/enterprise/profile",
+        "text": "我的",
+        "iconPath": "static/tab_user.png",
+        "selectedIconPath": "static/tab_user_active.png"
+      }
+    ]
+  }
+}

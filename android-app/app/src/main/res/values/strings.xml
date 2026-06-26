@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">阿克苏监管</string>
+    <string name="login_title">阿克苏监管</string>
+    <string name="login_subtitle">安全监管移动平台</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_task">任务</string>
+    <string name="tab_enterprise">企业</string>
+    <string name="tab_alert">预警</string>
+    <string name="tab_profile">我的</string>
+</resources>

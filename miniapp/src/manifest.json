@@ -1,0 +1,23 @@
+{
+  "name": "aksu-supervision-miniapp",
+  "appid": "",
+  "description": "阿克苏监管平台-企业端",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false,
+      "es6": true,
+      "minified": true
+    },
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": {
+        "desc": "用于企业位置定位"
+      }
+    },
+    "requiredPrivateInfos": ["chooseImage", "chooseMedia", "getLocation"]
+  }
+}

@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+target/
+build/
+.gradle/
+.idea/
+*.iml
+
+# Build output
+backend/target/
+web-admin/dist/
+miniapp-h5/dist/
+miniapp/dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+nul
+
+# Dev environment
+dev-env/
+
+# Uploads
+uploads/
+
+# Test
+*.test.js
+coverage/
+
+# Temp files
+*.tmp
+*.bak
+*.swp
