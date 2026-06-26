@@ -130,6 +130,18 @@ const routes = [
         component: () => import('@/views/system/org/index.vue'),
         meta: { title: '组织架构', icon: 'OfficeBuilding' }
       },
+      {
+        path: 'system/position',
+        name: 'PositionManage',
+        component: () => import('@/views/system/position/index.vue'),
+        meta: { title: '岗位管理', icon: 'Stamp' }
+      },
+      {
+        path: 'system/job-title',
+        name: 'JobTitleManage',
+        component: () => import('@/views/system/job-title/index.vue'),
+        meta: { title: '职务管理', icon: 'Medal' }
+      },
       // 小程序用户管理
       {
         path: 'miniapp/user',

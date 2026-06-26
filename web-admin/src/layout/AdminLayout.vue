@@ -89,6 +89,14 @@
               <el-icon><OfficeBuilding /></el-icon>
               <template #title>组织架构</template>
             </el-menu-item>
+            <el-menu-item index="/system/position">
+              <el-icon><Stamp /></el-icon>
+              <template #title>岗位管理</template>
+            </el-menu-item>
+            <el-menu-item index="/system/job-title">
+              <el-icon><Medal /></el-icon>
+              <template #title>职务管理</template>
+            </el-menu-item>
           </el-sub-menu>
 
           <el-sub-menu index="miniapp">

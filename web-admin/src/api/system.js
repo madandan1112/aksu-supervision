@@ -104,3 +104,87 @@ export function updateOrgNode(id, data) {
 export function deleteOrgNode(id) {
   return request({ url: `/admin/system/org/${id}`, method: 'delete' })
 }
+
+export function getOrgPath(id) {
+  return request({ url: `/admin/system/org/${id}/path`, method: 'get' })
+}
+
+// 岗位管理
+export function getPositionList(params) {
+  return request({ url: '/admin/system/position/list', method: 'get', params })
+}
+
+export function createPosition(data) {
+  return request({ url: '/admin/system/position', method: 'post', data })
+}
+
+export function updatePosition(id, data) {
+  return request({ url: `/admin/system/position/${id}`, method: 'put', data })
+}
+
+export function deletePosition(id) {
+  return request({ url: `/admin/system/position/${id}`, method: 'delete' })
+}
+
+export function getPositionsByCategory(category) {
+  return request({ url: `/admin/system/position/category/${category}`, method: 'get' })
+}
+
+// 职务管理
+export function getJobTitleList(params) {
+  return request({ url: '/admin/system/job-title/list', method: 'get', params })
+}
+
+export function createJobTitle(data) {
+  return request({ url: '/admin/system/job-title', method: 'post', data })
+}
+
+export function updateJobTitle(id, data) {
+  return request({ url: `/admin/system/job-title/${id}`, method: 'put', data })
+}
+
+export function deleteJobTitle(id) {
+  return request({ url: `/admin/system/job-title/${id}`, method: 'delete' })
+}
+
+export function getLeadershipTitles() {
+  return request({ url: '/admin/system/job-title/leadership', method: 'get' })
+}
+
+// 用户岗位职务分配
+export function assignUserPosition(data) {
+  return request({ url: '/admin/system/user-position', method: 'post', data })
+}
+
+export function removeUserPosition(id) {
+  return request({ url: `/admin/system/user-position/${id}`, method: 'delete' })
+}
+
+export function getUserPositions(userId) {
+  return request({ url: `/admin/system/user-position/user/${userId}`, method: 'get' })
+}
+
+export function getOrgUserPositions(orgId) {
+  return request({ url: `/admin/system/user-position/org/${orgId}`, method: 'get' })
+}
+
+export function setPrimaryPosition(id) {
+  return request({ url: `/admin/system/user-position/${id}/primary`, method: 'put' })
+}
+
+// 事件驱动：入职/调动/离职/升降级
+export function onboardUser(userId, data) {
+  return request({ url: `/admin/system/user/${userId}/onboard`, method: 'post', data })
+}
+
+export function transferUser(userId, data) {
+  return request({ url: `/admin/system/user/${userId}/transfer`, method: 'post', data })
+}
+
+export function resignUser(userId, data) {
+  return request({ url: `/admin/system/user/${userId}/resign`, method: 'post', data })
+}
+
+export function promoteUser(userId, data) {
+  return request({ url: `/admin/system/user/${userId}/promote`, method: 'post', data })
+}
