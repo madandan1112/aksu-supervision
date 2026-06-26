@@ -11,6 +11,8 @@ public interface AppealRepository extends JpaRepository<Appeal, Long> {
 
     Page<Appeal> findByEnterpriseIdOrderByCreateTimeDesc(Long enterpriseId, Pageable pageable);
 
+    Page<Appeal> findByEnterpriseIdAndStatus(Long enterpriseId, String status, Pageable pageable);
+
     @Query("SELECT a FROM Appeal a WHERE " +
            "(:status IS NULL OR a.status = :status) AND " +
            "(:type IS NULL OR a.appealType = :type) AND " +

@@ -19,4 +19,6 @@ public interface InspectionTaskRepository extends JpaRepository<InspectionTask, 
                                            Pageable pageable);
 
     Page<InspectionTask> findByCreatedByOrderByCreateTimeDesc(String createdBy, Pageable pageable);
+
+    long countByStatus(String status);
 }

@@ -23,4 +23,6 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     long countByStatus(String status);
 
     long countByLevel(String level);
+
+    Page<Alert> findByEnterpriseId(Long enterpriseId, Pageable pageable);
 }

@@ -19,9 +19,13 @@ public class DashboardStats {
     private long taskCount;
     private long alertCount;
     private long inspectionCount;
+    private long pendingAppeals;
+    private long pendingAlerts;
+    private long pendingTasks;
     private Map<String, Long> appealByStatus;
     private Map<String, Long> taskByStatus;
     private Map<String, Long> alertByLevel;
     private List<Map<String, Object>> recentAppeals;
     private List<Map<String, Object>> recentAlerts;
+    private String userType;
 }
