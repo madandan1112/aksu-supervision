@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿克苏数字监管平台 · Apple 风格 × 市监品牌 UI 方案</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif; background:#000; color:#F5F5F7; padding:64px 48px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  .kicker { font-size:14px; color:#86868B; letter-spacing:.5px; }
+  h1 { font-size:44px; font-weight:700; letter-spacing:-1px; margin-top:10px; }
+  h1 span { color:#E0364C; }
+  .sub { margin-top:14px; color:#86868B; font-size:16px; line-height:1.6; max-width:760px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px; }
+  a.card { display:block; text-decoration:none; color:inherit; border-radius:20px; padding:26px; background:#1D1D1F; border:1px solid rgba(255,255,255,.06); transition:transform .18s ease, border-color .18s ease; }
+  a.card:hover { transform:translateY(-2px); border-color:rgba(200,16,46,.45); }
+  .num { font-size:13px; color:#6E6E73; font-variant-numeric:tabular-nums; }
+  .card h2 { font-size:22px; font-weight:600; margin:10px 0 8px; letter-spacing:-.3px; }
+  .card p { font-size:13.5px; color:#86868B; line-height:1.65; }
+  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .meta { margin-top:16px; font-size:12px; color:#48484A; }
+  .foot { margin-top:52px; padding-top:22px; border-top:1px solid rgba(255,255,255,.08); color:#48484A; font-size:12.5px; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">阿克苏地区市场监督管理局 · 数字化监管平台</p>
+  <h1>苹果的结构，<span>市监的血脉。</span></h1>
+  <p class="sub">Apple HIG 的排版与组件语言（大标题、分组列表、细线图标、hairline 分隔），叠加市场监督管理品牌识别：局徽红 #C8102E 为主强调色，徽章金用于局徽与「督办」语义，语义色（绿合格 / 橙待办）保留。</p>
+
+  <div class="grid">
+    <a class="card" href="01-miniprogram-enterprise.html">
+      <p class="num">UI 01</p>
+      <h2>小程序 · 企业商户端</h2>
+      <p>iOS 浅色模式。市监红作主强调（按钮/选中/链接），红色 App 图标式局徽（红底金盾）。注册、诉求、整改、报告。</p>
+      <p class="meta" style="margin-top:14px;">
+        <span class="dot" style="background:#C8102E"></span>主 红 C8102E
+        <span class="dot" style="background:#E5C893;margin-left:10px"></span>徽金
+        <span class="dot" style="background:#34C759;margin-left:10px"></span>合格绿
+        <span class="dot" style="background:#FF9500;margin-left:10px"></span>待办橙
+      </p>
+      <p class="meta">6 屏 · 登录 / 首页 / 注册向导 / 诉求 / 整改反馈 / 我的</p>
+    </a>
+    <a class="card" href="02-miniprogram-inspector.html">
+      <p class="num">UI 02</p>
+      <h2>小程序 · 执法人员端</h2>
+      <p>iOS 深色（Pro 应用气质）。市监红亮变体 #F0565F 作深色主强调，徽章金局徽；督办倒计时橙色。扫码、检查、预警督办。</p>
+      <p class="meta" style="margin-top:14px;">
+        <span class="dot" style="background:#F0565F"></span>主 红 F0565F
+        <span class="dot" style="background:#C9A063;margin-left:10px"></span>徽金
+        <span class="dot" style="background:#FF9F0A;margin-left:10px"></span>督办橙
+        <span class="dot" style="background:#1C1C1E;margin-left:10px"></span>卡片 1C1C1E
+      </p>
+      <p class="meta">6 屏 · 登录 / 工作台 / 扫码查企 / 现场检查 / 预警 / 我的</p>
+    </a>
+    <a class="card" href="03-web-admin.html">
+      <p class="num">UI 03</p>
+      <h2>Web 管理后台</h2>
+      <p>macOS 风格：红绿灯窗口、浅灰侧栏、市监红选中态与主按钮；图表单红色系（Apple Charts 审美）；「已督办」用徽章金语义。</p>
+      <p class="meta" style="margin-top:14px;">
+        <span class="dot" style="background:#C8102E"></span>主 红
+        <span class="dot" style="background:#8F6A1E;margin-left:10px"></span>督办金
+        <span class="dot" style="background:#007AFF;margin-left:10px"></span>信息蓝（辅助）
+        <span class="dot" style="background:#FFFFFF;margin-left:10px"></span>内容白
+      </p>
+      <p class="meta">4 屏 · 数据看板 / 组织架构 / 预警督办 / 注册审核</p>
+    </a>
+    <a class="card" href="04-public-scan.html">
+      <p class="num">UI 04</p>
+      <h2>公众扫码公示 H5</h2>
+      <p>iOS 浅色 + 市监红主强调（局徽线标 / 按钮 / 监管单位标识），绿色仅表「合格 / 有效」。免登录，扫码直达信用卡。</p>
+      <p class="meta" style="margin-top:14px;">
+        <span class="dot" style="background:#C8102E"></span>主 红
+        <span class="dot" style="background:#34C759;margin-left:10px"></span>合格绿
+        <span class="dot" style="background:#FF3B30;margin-left:10px"></span>举报红
+      </p>
+      <p class="meta">2 屏 · 企业信用公示 / 属地监管与举报</p>
+    </a>
+  </div>
+
+  <div class="foot">
+    品牌规范：局徽红 C8102E（近国家市场监管总局官网红，可按局方 VI 精确色号微调）· 徽章金 E5C893 / C9A063 · 语义色沿用 iOS（绿 34C759 / 橙 FF9500 / 红 FF3B30）<br>
+    设计原则：无渐变堆叠 · 无表情符号（细线 SVG 图标）· 大标题 + 分组列表 + 分段控件 · 内容全部来自项目真实数据
+  </div>
+</div>
+</body>
+</html>

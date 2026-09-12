@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>UI04 · 公众扫码公示H5 · Apple 风格</title>
+<style>
+  :root{
+    --green:#34C759; --brand:#C8102E; --gold:#B98A2F; --red:#FF3B30; --orange:#FF9500;
+    --bg:#F2F2F7; --card:#FFFFFF; --fill:rgba(120,120,128,.12);
+    --t1:#1C1C1E; --t2:rgba(60,60,67,.6); --t3:rgba(60,60,67,.3);
+    --sep:rgba(60,60,67,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;}
+  body{zoom:0.78;background:#000;padding:44px 36px;color:#F5F5F7;}
+  .spec{max-width:1560px;margin:0 auto 24px;}
+  .spec h1{font-size:26px;font-weight:700;letter-spacing:-.4px;}
+  .spec p{color:#86868B;font-size:13px;margin-top:8px;line-height:1.7;max-width:900px;}
+  .row{display:flex;gap:32px;overflow-x:auto;padding:26px 4px 44px;align-items:flex-start;}
+  .col{flex-shrink:0;}
+  .cap{text-align:center;font-size:12px;color:#86868B;margin-top:14px;line-height:1.7;}
+  .cap b{color:#F5F5F7;display:block;font-size:13px;font-weight:600;margin-bottom:2px;}
+  .phone{width:375px;height:812px;background:var(--bg);border-radius:54px;border:11px solid #1C1C1E;box-shadow:0 32px 64px rgba(0,0,0,.55);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:32px;background:#1C1C1E;border-radius:20px;z-index:60;}
+  .status{height:52px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 30px 6px;font-size:14px;font-weight:600;color:var(--t1);}
+  .home{height:8px;width:130px;background:var(--t1);border-radius:5px;margin:6px auto 8px;}
+  .body{flex:1;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .nav{padding:6px 16px 10px;display:flex;align-items:flex-end;justify-content:space-between;}
+  .nav .back{color:var(--brand);font-size:15px;display:flex;align-items:center;gap:2px;}
+  .big{font-size:30px;font-weight:700;letter-spacing:-.6px;color:var(--t1);padding:2px 20px 12px;}
+  .grp{background:var(--card);border-radius:12px;margin:0 16px 16px;overflow:hidden;}
+  .cell{display:flex;align-items:center;gap:12px;padding:12px 16px;position:relative;}
+  .cell + .cell::before{content:'';position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep);}
+  .cell .ttl{font-size:15.5px;color:var(--t1);flex:1;}
+  .cell .val{font-size:15px;color:var(--t2);}
+  .chev{color:var(--t3);width:8px;}
+  .btn{display:block;text-align:center;background:var(--brand);color:#fff;font-size:17px;font-weight:600;border-radius:14px;padding:15px;margin:0 16px;}
+  .btn.gray{background:var(--fill);color:var(--t1);}
+  .btn.red{background:var(--red);}
+  .foot-note{text-align:center;font-size:12px;color:var(--t3);line-height:1.7;}
+  .stat-num{font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.5px;}
+</style>
+</head>
+<body>
+<div class="spec">
+  <h1>UI 04 · 公众扫码公示 H5（Apple 风格）</h1>
+  <p>iOS 浅色 + 市监红 #C8102E 主强调（局徽/按钮/监管单位），绿色仅作「合格/有效」语义色；举报用红色主按钮。免登录、零输入：扫「监管码」直达企业信用卡。</p>
+</div>
+
+<div class="row">
+
+<!-- ============ 屏1 企业信用公示 ============ -->
+<div class="col">
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span>9:41</span><span>●●●</span></div>
+  <div class="body">
+    <div style="padding:4px 20px 0;display:flex;align-items:center;gap:8px;">
+      <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--t2);display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 96 96" fill="none" style="flex-shrink:0;"><circle cx="48" cy="48" r="46" fill="#9E0C22"/><circle cx="48" cy="48" r="42" fill="#C8102E"/><circle cx="48" cy="48" r="42" stroke="#F4DCA0" stroke-width="4"/><path d="M48 22 L50 27 L55 27.5 L51.3 30.8 L52.4 35.6 L48 33.2 L43.6 35.6 L44.7 30.8 L41 27.5 L46 27 Z" fill="#F4DCA0"/><path d="M48 39 C43.5 39 39 40.2 39 40.2 V52 C39 60 43 65 48 67.6 C53 65 57 60 57 52 V40.2 C57 40.2 52.5 39 48 39 Z" stroke="#F4DCA0" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M40.5 47 H55.5 M48 45 V58" stroke="#F4DCA0" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+      <span style="font-size:12.5px;color:var(--t2);">阿克苏地区市场监管 · 企业信息公示</span>
+    </div>
+    <div class="big" style="font-size:24px;padding-top:14px;">阿克苏市光明乳品有限公司</div>
+    <p style="font-size:13px;color:var(--t3);padding:0 20px 16px;">91652901MA77XXXXX4 · 餐饮服务 · 阿克苏市英巴扎街道</p>
+    <!-- 状态三格 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 16px 16px;">
+      <div class="grp" style="margin:0;padding:13px 0;text-align:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M4 12.5 9.5 18 20 6.5"/></svg><p style="font-size:12px;color:var(--t1);margin-top:5px;font-weight:600;">信用正常</p></div>
+      <div class="grp" style="margin:0;padding:13px 0;text-align:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h5"/></svg><p style="font-size:12px;color:var(--t1);margin-top:5px;font-weight:600;">执照有效</p></div>
+      <div class="grp" style="margin:0;padding:13px 0;text-align:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg><p style="font-size:12px;color:var(--t1);margin-top:5px;font-weight:600;">许可有效</p></div>
+    </div>
+    <!-- 亮证 -->
+    <p style="font-size:13px;font-weight:600;color:var(--t2);padding:0 20px 10px;">亮证信息</p>
+    <div class="grp">
+      <div class="cell">
+        <span class="ttl">营业执照</span>
+        <span class="val">91652901MA77XXXXX4</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+      </div>
+      <div class="cell">
+        <span class="ttl">食品经营许可证</span>
+        <span class="val">JY16529010001234 · 2027-03</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+      </div>
+      <div class="cell">
+        <span class="ttl">从业人员健康证</span>
+        <span class="val">12 / 12 持证</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+      </div>
+    </div>
+    <!-- 检查公示 -->
+    <p style="font-size:13px;font-weight:600;color:var(--t2);padding:4px 20px 10px;">监督检查公示 · 近12个月 8 次</p>
+    <div class="grp">
+      <div class="cell" style="flex-direction:column;align-items:stretch;gap:5px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <b style="font-size:15px;color:var(--t1);">2026-09-08 日常检查</b>
+          <span style="font-size:13px;color:var(--orange);font-weight:500;">整改中</span>
+        </div>
+        <p style="font-size:13px;color:var(--t2);">发现 2 项问题，已责令限期整改</p>
+        <p style="font-size:12px;color:var(--t3);">阿克苏市市监局 · 食品安全监管科</p>
+      </div>
+      <div class="cell" style="flex-direction:column;align-items:stretch;gap:5px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <b style="font-size:15px;color:var(--t1);">2026-08-02 日常检查</b>
+          <span style="font-size:13px;color:var(--green);font-weight:500;">合格</span>
+        </div>
+        <p style="font-size:13px;color:var(--t2);">未发现问题</p>
+        <p style="font-size:12px;color:var(--t3);">阿克苏市市监局 · 食品安全监管科</p>
+      </div>
+    </div>
+    <p class="foot-note" style="margin-top:4px;">公示信息由阿克苏地区市场监督管理局提供<br>数据更新于 2026-09-10</p>
+    <div style="height:12px;"></div>
+  </div>
+  <div class="home"></div>
+</div>
+<div class="cap"><b>1 · 企业信用公示</b>三格状态 + 亮证清单<br>检查公示分组列表</div>
+</div>
+
+<!-- ============ 屏2 属地监管与举报 ============ -->
+<div class="col">
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span>9:41</span><span>●●●</span></div>
+  <div class="body">
+    <div class="nav">
+      <span class="back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>返回</span>
+      <span style="font-size:16px;font-weight:600;color:var(--t1);">属地监管</span>
+      <span style="width:44px;"></span>
+    </div>
+    <div class="big" style="font-size:26px;">监管与举报</div>
+    <!-- 监管所 -->
+    <div class="grp" style="padding:15px 16px;">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="width:42px;height:42px;border-radius:11px;background:rgba(200,16,46,.08);display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+        </div>
+        <div style="flex:1;">
+          <b style="font-size:15.5px;color:var(--t1);">阿克苏市市场监督管理局</b>
+          <p style="font-size:12.5px;color:var(--t3);margin-top:3px;">英巴扎街道市场监管所 · 属地监管</p>
+        </div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:11px 13px;margin-top:12px;font-size:13px;color:var(--t2);line-height:2;">
+        <p style="display:flex;gap:8px;align-items:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>英巴扎街道…幸福路</p>
+        <p style="display:flex;gap:8px;align-items:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>0909-2123456（工作日）</p>
+      </div>
+    </div>
+    <!-- 执法人员 -->
+    <p style="font-size:13px;font-weight:600;color:var(--t2);padding:0 20px 10px;">网格执法人员</p>
+    <div class="grp">
+      <div class="cell">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--fill);display:flex;align-items:center;justify-content:center;"><span style="font-size:15px;color:var(--t2);font-weight:600;">吴</span></div>
+        <div style="flex:1;">
+          <b style="font-size:15px;color:var(--t1);">吴执法</b>
+          <p style="font-size:12px;color:var(--t3);margin-top:2px;">网格员 · 执法证 AKSF-0150</p>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+      </div>
+      <div class="cell">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--fill);display:flex;align-items:center;justify-content:center;"><span style="font-size:15px;color:var(--t2);font-weight:600;">孙</span></div>
+        <div style="flex:1;">
+          <b style="font-size:15px;color:var(--t1);">孙科长</b>
+          <p style="font-size:12px;color:var(--t3);margin-top:2px;">科室负责人 · 执法证 AKSF-0121</p>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+      </div>
+    </div>
+    <!-- 举报 -->
+    <p style="font-size:13px;font-weight:600;color:var(--t2);padding:4px 20px 10px;">发现问题 · 随手举报</p>
+    <div class="grp" style="padding:14px 16px;">
+      <p style="font-size:13.5px;color:var(--t2);line-height:1.7;">食品安全、无证经营、假冒伪劣、价格欺诈……欢迎监督举报，监管部门将依法核查处理。</p>
+    </div>
+    <div class="btn red" style="margin-top:14px;">平台一键举报（实名可查进度）</div>
+    <div class="btn gray" style="margin-top:10px;">拨打 12315 热线</div>
+    <p class="foot-note" style="margin-top:12px;">举报将转入属地监管所处置流程<br>依据《市场监督管理投诉举报处理暂行办法》办理</p>
+    <div style="height:12px;"></div>
+  </div>
+  <div class="home"></div>
+</div>
+<div class="cap"><b>2 · 属地监管与举报</b>监管所+网格员公示（电话直达）<br>举报双通道（系统红主按钮）</div>
+</div>
+
+</div>
+</body>
+</html>

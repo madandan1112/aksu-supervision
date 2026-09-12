@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>UI03 · Web管理后台 · macOS 风格</title>
+<style>
+  :root{
+    --brand:#C8102E; --green:#34C759; --red:#FF3B30; --orange:#FF9500;
+    --t1:#1D1D1F; --t2:rgba(60,60,67,.6); --t3:rgba(60,60,67,.35);
+    --sep:rgba(0,0,0,.09); --side:#F2F2F4; --win:#FFFFFF; --sel:rgba(200,16,46,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;}
+  body{background:#000;padding:44px 30px;color:#F5F5F7;}
+  .spec{max-width:1700px;margin:0 auto 24px;}
+  .spec h1{font-size:26px;font-weight:700;letter-spacing:-.4px;}
+  .spec p{color:#86868B;font-size:13px;margin-top:8px;line-height:1.7;max-width:960px;}
+  .screens{display:flex;flex-direction:column;gap:40px;align-items:center;padding:24px 0 50px;}
+  .cap{text-align:center;font-size:12px;color:#86868B;margin-top:14px;line-height:1.7;}
+  .cap b{color:#F5F5F7;display:block;font-size:13px;font-weight:600;margin-bottom:2px;}
+  /* macOS 窗口 */
+  .mac{width:1440px;height:900px;background:var(--win);border-radius:12px;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.6);overflow:hidden;position:relative;transform-origin:top center;}
+  .scale8{transform:scale(.8);margin-bottom:-178px;}
+  .traffic{height:38px;background:#F6F6F8;border-bottom:1px solid var(--sep);display:flex;align-items:center;padding:0 14px;position:relative;}
+  .tl{width:12px;height:12px;border-radius:50%;margin-right:8px;}
+  .wintitle{position:absolute;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:var(--t2);}
+  .shell{display:flex;height:calc(100% - 38px);}
+  /* 侧栏 */
+  .side{width:224px;background:var(--side);border-right:1px solid var(--sep);padding:12px 10px;flex-shrink:0;}
+  .ssearch{background:#fff;border:1px solid var(--sep);border-radius:7px;padding:5px 9px;font-size:12.5px;color:var(--t3);margin-bottom:10px;display:flex;gap:6px;align-items:center;}
+  .sg{font-size:11px;font-weight:700;color:var(--t3);padding:12px 8px 4px;letter-spacing:.3px;}
+  .si{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:7px;font-size:13px;color:var(--t1);margin-bottom:1px;}
+  .si svg{width:16px;height:16px;color:var(--t2);}
+  .si.on{background:var(--sel);color:var(--brand);font-weight:600;}
+  .si.on svg{color:var(--brand);}
+  .si .n{margin-left:auto;background:var(--red);color:#fff;font-size:10px;border-radius:9px;padding:0 6px;line-height:16px;}
+  /* 内容 */
+  .content{flex:1;background:#fff;padding:22px 26px;position:relative;overflow:hidden;}
+  .chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .chead h2{font-size:22px;font-weight:700;letter-spacing:-.4px;color:var(--t1);}
+  .btn{display:inline-block;font-size:13px;border-radius:7px;padding:7px 15px;font-weight:500;}
+  .b-pri{background:var(--brand);color:#fff;}
+  .b-plain{border:1px solid var(--sep);color:var(--t1);background:#fff;}
+  .b-red{background:var(--red);color:#fff;}
+  .card{background:#fff;border:1px solid var(--sep);border-radius:10px;}
+  .tag{display:inline-block;font-size:11px;padding:1.5px 8px;border-radius:5px;font-weight:500;}
+  .t-blue{background:rgba(0,122,255,.1);color:var(--brand);} .t-green{background:rgba(52,199,89,.12);color:#248A3D;}
+  .t-orange{background:rgba(255,149,0,.12);color:#C77700;} .t-red{background:rgba(255,59,48,.1);color:#D70015;}
+  .t-gray{background:rgba(120,120,128,.12);color:var(--t2);}
+  .t-gold{background:rgba(185,138,47,.14);color:#8F6A1E;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{color:var(--t2);font-weight:600;text-align:left;padding:9px 14px;border-bottom:1px solid var(--sep);white-space:nowrap;background:#FBFBFD;}
+  td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05);color:var(--t1);white-space:nowrap;}
+  .wm{position:absolute;right:26px;bottom:14px;font-size:11px;color:rgba(29,29,31,.06);letter-spacing:3px;pointer-events:none;}
+</style>
+</head>
+<body>
+<div class="spec">
+  <h1>UI 03 · Web 管理后台（macOS 风格）</h1>
+  <p>macOS 窗口语言：红绿灯标题栏、浅灰半透明侧栏、hairline 分隔；主强调为市监红 #C8102E（选中/主按钮/图表单色系），徽章金 #8F6A1E 用于「已督办」语义。信息标签保留 iOS 蓝作辅助。图表遵循 Apple Charts 审美——无框线、克制网格。</p>
+</div>
+
+<div class="screens">
+
+<!-- ============ 屏1 数据看板 ============ -->
+<div>
+<div class="mac scale8">
+  <div class="traffic">
+    <span class="tl" style="background:#FF5F57;"></span><span class="tl" style="background:#FEBC2E;"></span><span class="tl" style="background:#28C840;"></span>
+    <span class="wintitle">阿克苏市场监管执法智慧平台 — 数据看板</span>
+  </div>
+  <div class="shell">
+    <div class="side">
+      <div style="display:flex;align-items:center;gap:9px;padding:2px 8px 12px;"><svg width="26" height="26" viewBox="0 0 96 96" fill="none" style="flex-shrink:0;"><circle cx="48" cy="48" r="46" fill="#9E0C22"/><circle cx="48" cy="48" r="42" fill="#C8102E"/><circle cx="48" cy="48" r="42" stroke="#F4DCA0" stroke-width="4"/><path d="M48 22 L50 27 L55 27.5 L51.3 30.8 L52.4 35.6 L48 33.2 L43.6 35.6 L44.7 30.8 L41 27.5 L46 27 Z" fill="#F4DCA0"/><path d="M48 39 C43.5 39 39 40.2 39 40.2 V52 C39 60 43 65 48 67.6 C53 65 57 60 57 52 V40.2 C57 40.2 52.5 39 48 39 Z" stroke="#F4DCA0" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M40.5 47 H55.5 M48 45 V58" stroke="#F4DCA0" stroke-width="3" stroke-linecap="round"/></svg><b style="font-size:13px;color:#1D1D1F;letter-spacing:-.2px;line-height:1.35;">阿克苏市场监管<br><span style="font-size:9px;color:#86868B;font-weight:500;">执法智慧平台</span></b></div>
+      <div class="ssearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>搜索</div>
+      <div class="si on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="8" rx="1.5"/><rect x="13" y="4" width="8" height="5" rx="1.5"/><rect x="13" y="11" width="8" height="9" rx="1.5"/><rect x="3" y="14" width="8" height="6" rx="1.5"/></svg>数据看板</div>
+      <div class="sg">监管业务</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>诉求管理<span class="n">3</span></div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>任务调度</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.5 20h19L12 4z"/><path d="M12 10v4.5"/><path d="M12 17.6v.1"/></svg>预警督办<span class="n">5</span></div>
+      <div class="sg">执法管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>现场检查</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.6 4.6 0 0 0-6.1 5.7L3 17.6V21h3.4l5.6-5.6a4.6 4.6 0 0 0 5.7-6.1L14.9 12l-2.9-2.9z"/></svg>整改管理</div>
+      <div class="sg">数据管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>企业档案</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7.5h6M9 11h6M9 14.5h4"/></svg>报告管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V4M16 19v-8M21 19H3"/></svg>统计分析</div>
+      <div class="sg">系统管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M12 8.5v3M7.3 15.8l3-2.6M16.7 15.8l-3-2.6"/></svg>组织架构</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg>后台用户</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="3.5"/><path d="M14 12h7M17.5 12v5"/></svg>角色权限</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14.8c2.4.6 4 2.4 4 5.2"/></svg>用户管理<span class="n">8</span></div>
+    </div>
+    <div class="content">
+      <div class="chead">
+        <h2>数据看板</h2>
+        <div><span class="btn b-plain">导出</span> <span class="btn b-pri">进入大屏</span></div>
+      </div>
+      <!-- 待办横幅 -->
+      <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:20px;background:#FBFBFD;">
+        <div style="flex:1;">
+          <b style="font-size:15px;color:var(--t1);">早上好，超级管理员</b>
+          <p style="font-size:12.5px;color:var(--t2);margin-top:4px;">今日待办 5 项 · 待审核注册 8 · 待处理预警 5 · 待分流诉求 3 · 临期报告 2</p>
+        </div>
+        <span class="btn b-pri">处理待办</span>
+      </div>
+      <!-- 指标 -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px;">
+        <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);">企业总数</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;">40</b><p style="font-size:11px;color:var(--green);">本月 +3</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);">诉求总数</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;">15</b><p style="font-size:11px;color:var(--t2);">待分流 3</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);">检查记录</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;">10</b><p style="font-size:11px;color:var(--brand);">本周 +2</p></div>
+        <div class="card" style="padding:14px 16px;border-top:3px solid var(--red);"><p style="font-size:11.5px;color:var(--t2);">活跃预警</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;color:var(--red);">22</b><p style="font-size:11px;color:var(--red);">高风险 9</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);">整改通知</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;">23</b><p style="font-size:11px;color:var(--orange);">整改中 12</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);">合规报告</p><b style="font-size:26px;font-weight:700;letter-spacing:-.5px;">11</b><p style="font-size:11px;color:var(--orange);">临期 2</p></div>
+      </div>
+      <!-- 图表 -->
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:14px;">
+        <div class="card" style="padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;"><b style="font-size:14px;color:var(--t1);">九县市企业分布</b><span style="font-size:11.5px;color:var(--t3);">共 40 家</span></div>
+          <div style="display:flex;align-items:flex-end;gap:16px;height:150px;padding:16px 4px 0;">
+            <div style="flex:1;text-align:center;"><div style="height:92px;background:#C8102E;opacity:.9;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">阿克苏市</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:74px;background:#C8102E;opacity:.72;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">库车市</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:66px;background:#C8102E;opacity:.72;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">温宿县</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:30px;background:#C8102E;opacity:.5;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">沙雅县</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:30px;background:#C8102E;opacity:.5;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">拜城县</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:30px;background:#C8102E;opacity:.5;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">新和县</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:20px;background:#C8102E;opacity:.35;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">乌什县</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:20px;background:#C8102E;opacity:.35;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">阿瓦提</p></div>
+            <div style="flex:1;text-align:center;"><div style="height:20px;background:#C8102E;opacity:.35;border-radius:4px 4px 0 0;"></div><p style="font-size:10.5px;color:var(--t2);margin-top:6px;">柯坪县</p></div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px 18px;">
+          <b style="font-size:14px;color:var(--t1);">预警等级分布</b>
+          <div style="padding:18px 4px 0;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="font-size:12px;color:var(--t2);width:20px;">高</span><div style="flex:1;height:6px;border-radius:3px;background:rgba(120,120,128,.14);"><div style="width:64%;height:100%;border-radius:3px;background:var(--red);"></div></div><b style="font-size:12px;width:16px;">9</b></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="font-size:12px;color:var(--t2);width:20px;">中</span><div style="flex:1;height:6px;border-radius:3px;background:rgba(120,120,128,.14);"><div style="width:50%;height:100%;border-radius:3px;background:var(--orange);"></div></div><b style="font-size:12px;width:16px;">7</b></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;color:var(--t2);width:20px;">低</span><div style="flex:1;height:6px;border-radius:3px;background:rgba(120,120,128,.14);"><div style="width:43%;height:100%;border-radius:3px;background:#8E8E93;"></div></div><b style="font-size:12px;width:16px;">6</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wm">阿克苏市场监督管理局</div>
+</div>
+<div class="cap"><b>1 · 数据看板</b>macOS 窗口 + 浅灰侧栏<br>Apple Charts 式单色柱图 / 进度条</div>
+</div>
+
+<!-- ============ 屏2 组织架构 ============ -->
+<div>
+<div class="mac scale8">
+  <div class="traffic">
+    <span class="tl" style="background:#FF5F57;"></span><span class="tl" style="background:#FEBC2E;"></span><span class="tl" style="background:#28C840;"></span>
+    <span class="wintitle">组织架构</span>
+  </div>
+  <div class="shell">
+    <div class="side">
+      <div style="display:flex;align-items:center;gap:9px;padding:2px 8px 12px;"><svg width="26" height="26" viewBox="0 0 96 96" fill="none" style="flex-shrink:0;"><circle cx="48" cy="48" r="46" fill="#9E0C22"/><circle cx="48" cy="48" r="42" fill="#C8102E"/><circle cx="48" cy="48" r="42" stroke="#F4DCA0" stroke-width="4"/><path d="M48 22 L50 27 L55 27.5 L51.3 30.8 L52.4 35.6 L48 33.2 L43.6 35.6 L44.7 30.8 L41 27.5 L46 27 Z" fill="#F4DCA0"/><path d="M48 39 C43.5 39 39 40.2 39 40.2 V52 C39 60 43 65 48 67.6 C53 65 57 60 57 52 V40.2 C57 40.2 52.5 39 48 39 Z" stroke="#F4DCA0" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M40.5 47 H55.5 M48 45 V58" stroke="#F4DCA0" stroke-width="3" stroke-linecap="round"/></svg><b style="font-size:13px;color:#1D1D1F;letter-spacing:-.2px;line-height:1.35;">阿克苏市场监管<br><span style="font-size:9px;color:#86868B;font-weight:500;">执法智慧平台</span></b></div>
+      <div class="ssearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>搜索</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="8" rx="1.5"/><rect x="13" y="4" width="8" height="5" rx="1.5"/><rect x="13" y="11" width="8" height="9" rx="1.5"/><rect x="3" y="14" width="8" height="6" rx="1.5"/></svg>数据看板</div>
+      <div class="sg">系统管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M12 8.5v3M7.3 15.8l3-2.6M16.7 15.8l-3-2.6"/></svg>组织架构</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg>后台用户</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="3.5"/><path d="M14 12h7M17.5 12v5"/></svg>角色权限</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14.8c2.4.6 4 2.4 4 5.2"/></svg>用户管理<span class="n">8</span></div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M9 12V7h6v5M12 7V4"/><path d="M6 12v8h12v-8"/></svg>操作日志</div>
+    </div>
+    <div class="content" style="display:flex;gap:16px;">
+      <!-- 左树 -->
+      <div class="card" style="width:330px;padding:10px;flex-shrink:0;">
+        <div style="font-size:12.5px;color:var(--t3);padding:4px 6px 8px;">四级体系 · 131 节点</div>
+        <div style="font-size:13px;">
+          <div style="padding:6px 8px;border-radius:6px;background:var(--sel);display:flex;gap:8px;align-items:center;font-weight:600;color:var(--brand);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>阿克苏地区市场监督管理局</div>
+          <div style="padding-left:20px;">
+            <div style="padding:5px 8px;display:flex;gap:8px;align-items:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>阿克苏市<span class="tag t-blue" style="margin-left:auto;">县市</span></div>
+            <div style="padding-left:20px;">
+              <div style="padding:5px 8px;display:flex;gap:8px;align-items:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>阿克苏市市场监督管理局<span class="tag t-gray" style="margin-left:auto;">分局</span></div>
+              <div style="padding-left:20px;">
+                <div style="padding:5px 8px;border-radius:6px;background:var(--sel);display:flex;gap:8px;align-items:center;font-weight:600;color:var(--brand);">食品安全监管科<span style="margin-left:auto;font-size:11px;color:var(--t3);font-weight:400;">5 人</span></div>
+                <div style="padding:5px 8px;display:flex;gap:8px;align-items:center;color:var(--t1);">药品化妆品监管科<span style="margin-left:auto;font-size:11px;color:var(--t3);">3 人</span></div>
+                <div style="padding:5px 8px;display:flex;gap:8px;align-items:center;color:var(--t1);">特种设备安全监察科<span style="margin-left:auto;font-size:11px;color:var(--t3);">4 人</span></div>
+                <div style="padding:5px 8px;color:var(--t3);font-size:12px;">其余 16 个科室…</div>
+              </div>
+              <div style="padding:5px 8px 5px 20px;display:flex;gap:8px;align-items:center;color:var(--t1);">英巴扎街道市场监管所<span class="tag t-gray" style="margin-left:auto;">乡镇所</span></div>
+            </div>
+            <div style="padding:5px 8px 5px 20px;display:flex;gap:8px;align-items:center;color:var(--t1);">库车市<span style="margin-left:auto;font-size:11px;color:var(--t3);">16 乡镇街道</span></div>
+            <div style="padding:5px 8px 5px 20px;display:flex;gap:8px;align-items:center;color:var(--t1);">温宿县<span style="margin-left:auto;font-size:11px;color:var(--t3);">13 乡镇街道</span></div>
+            <div style="padding:5px 8px 5px 20px;color:var(--t3);font-size:12px;">其余 6 县市…</div>
+          </div>
+        </div>
+      </div>
+      <!-- 右详情 -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:14px;">
+        <div class="chead" style="margin:0;">
+          <div><h2 style="font-size:19px;">食品安全监管科</h2><p style="font-size:12.5px;color:var(--t2);margin-top:3px;">ORG-12406 · 上级：阿克苏市市场监督管理局 · 层级 4/4</p></div>
+          <div><span class="btn b-plain">编辑</span> <span class="btn b-plain">管理人员</span> <span class="btn b-pri">新增下级</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);margin-bottom:8px;">基本信息</p><div style="font-size:12.5px;color:var(--t1);line-height:2;">负责人：孙科长（科长）<br>电话：0909-2123456<br>类型：机关 · 正常</div></div>
+          <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);margin-bottom:8px;">人员构成 · 5 人</p><div style="font-size:12.5px;color:var(--t1);line-height:2;">科长 1 · 副科长 1 · 执法员 3<br>主职 5 · 兼职 0<br>持执法证 4 / 5</div></div>
+          <div class="card" style="padding:14px 16px;"><p style="font-size:11.5px;color:var(--t2);margin-bottom:8px;">数据权限</p><div style="font-size:12.5px;color:var(--t1);line-height:2;">区域：县市级（阿克苏市）<br>可见企业：10 家<br>下辖乡镇所：10 个</div></div>
+        </div>
+        <div class="card" style="flex:1;padding:0;">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--sep);display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">科室人员</b><span class="btn b-plain" style="padding:4px 12px;">分配人员</span></div>
+          <table>
+            <tr><th>姓名</th><th>职务 / 岗位</th><th>执法证号</th><th>主职</th><th>账号</th><th>状态</th></tr>
+            <tr><td><b>孙科长</b></td><td>科长 · 食品安全监管</td><td>AKSF-0121</td><td><span class="tag t-blue">主职</span></td><td>dept_chief_ws_food</td><td><span class="tag t-green">在岗</span></td></tr>
+            <tr><td><b>吴执法</b></td><td>执法员 · 食品安全监管</td><td>AKSF-0150</td><td><span class="tag t-blue">主职</span></td><td>enforcer_ws_001</td><td><span class="tag t-green">在岗</span></td></tr>
+            <tr><td><b>周执法</b></td><td>执法员 · 食品安全监管</td><td>AKSF-0151</td><td>—</td><td>zhou_zf</td><td><span class="tag t-gray">借调</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wm">阿克苏市场监督管理局</div>
+</div>
+<div class="cap"><b>2 · 组织架构</b>左树右详情 · 侧栏选中蓝<br>人员/执法证/数据权限三卡</div>
+</div>
+
+<!-- ============ 屏3 预警督办 ============ -->
+<div>
+<div class="mac scale8">
+  <div class="traffic">
+    <span class="tl" style="background:#FF5F57;"></span><span class="tl" style="background:#FEBC2E;"></span><span class="tl" style="background:#28C840;"></span>
+    <span class="wintitle">预警督办</span>
+  </div>
+  <div class="shell">
+    <div class="side">
+      <div style="display:flex;align-items:center;gap:9px;padding:2px 8px 12px;"><svg width="26" height="26" viewBox="0 0 96 96" fill="none" style="flex-shrink:0;"><circle cx="48" cy="48" r="46" fill="#9E0C22"/><circle cx="48" cy="48" r="42" fill="#C8102E"/><circle cx="48" cy="48" r="42" stroke="#F4DCA0" stroke-width="4"/><path d="M48 22 L50 27 L55 27.5 L51.3 30.8 L52.4 35.6 L48 33.2 L43.6 35.6 L44.7 30.8 L41 27.5 L46 27 Z" fill="#F4DCA0"/><path d="M48 39 C43.5 39 39 40.2 39 40.2 V52 C39 60 43 65 48 67.6 C53 65 57 60 57 52 V40.2 C57 40.2 52.5 39 48 39 Z" stroke="#F4DCA0" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M40.5 47 H55.5 M48 45 V58" stroke="#F4DCA0" stroke-width="3" stroke-linecap="round"/></svg><b style="font-size:13px;color:#1D1D1F;letter-spacing:-.2px;line-height:1.35;">阿克苏市场监管<br><span style="font-size:9px;color:#86868B;font-weight:500;">执法智慧平台</span></b></div>
+      <div class="ssearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>搜索</div>
+      <div class="sg">监管业务</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.5 20h19L12 4z"/><path d="M12 10v4.5"/><path d="M12 17.6v.1"/></svg>预警督办<span class="n">5</span></div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>诉求管理<span class="n">3</span></div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>任务调度</div>
+      <div class="sg">执法管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>现场检查</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.6 4.6 0 0 0-6.1 5.7L3 17.6V21h3.4l5.6-5.6a4.6 4.6 0 0 0 5.7-6.1L14.9 12l-2.9-2.9z"/></svg>整改管理</div>
+    </div>
+    <div class="content">
+      <div class="chead">
+        <h2>预警督办</h2>
+        <div><span class="btn b-plain">导出</span> <span class="btn b-red">手动全量扫描</span></div>
+      </div>
+      <!-- 状态卡 -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">
+        <div class="card" style="padding:12px 14px;text-align:center;cursor:default;"><b style="font-size:22px;font-weight:700;">22</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">全部</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center;border-top:3px solid var(--orange);"><b style="font-size:22px;font-weight:700;color:var(--orange);">6</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">待处理</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center;border-top:3px solid var(--brand);"><b style="font-size:22px;font-weight:700;color:var(--brand);">4</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">处理中</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center;"><b style="font-size:22px;font-weight:700;color:#8E8E93;">3</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">已督办</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center;border-top:3px solid var(--green);"><b style="font-size:22px;font-weight:700;color:var(--green);">9</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">已处置</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center;border-top:3px solid var(--red);"><b style="font-size:22px;font-weight:700;color:var(--red);">9</b><p style="font-size:11px;color:var(--t2);margin-top:2px;">高风险</p></div>
+      </div>
+      <!-- 表格 -->
+      <div class="card" style="margin-top:14px;padding:0;">
+        <table>
+          <tr><th>预警内容</th><th>类型</th><th>等级</th><th>来源</th><th>属地 / 企业</th><th>派单 / 处理</th><th>督办</th><th>状态</th><th>操作</th></tr>
+          <tr style="background:#FFFBFB;">
+            <td><b>食品经营许可证已过期</b><br><span style="font-size:11.5px;color:var(--t3);">#14 · 09-10 00:02</span></td>
+            <td><span class="tag t-orange">许可证过期</span></td>
+            <td><span class="tag t-red">高</span></td>
+            <td><span class="tag t-blue">实时</span></td>
+            <td>阿克苏市 · 光明乳品</td>
+            <td>吴执法</td>
+            <td><b style="color:var(--orange);">19:24:11</b><br><span style="font-size:11px;color:var(--t3);">超时 → 科长</span></td>
+            <td><span class="tag t-orange">待处理</span></td>
+            <td><span class="btn b-pri" style="padding:4px 10px;font-size:12px;">详情</span></td>
+          </tr>
+          <tr>
+            <td><b>整改超期未反馈（8 天）</b><br><span style="font-size:11.5px;color:var(--t3);">#9 · 09-09 02:00</span></td>
+            <td><span class="tag t-orange">整改超期</span></td>
+            <td><span class="tag t-red">高</span></td>
+            <td><span class="tag t-gray">定时</span></td>
+            <td>温宿县 · 某餐饮</td>
+            <td><b>赵局长</b><br><span style="font-size:11px;color:var(--t3);">升级改派自 吴执法</span></td>
+            <td><b>已督办 2 次</b></td>
+            <td><span class="tag t-gold">已督办</span></td>
+            <td><span class="btn b-pri" style="padding:4px 10px;font-size:12px;">详情</span> <span class="btn b-red" style="padding:4px 10px;font-size:12px;">催办</span></td>
+          </tr>
+          <tr>
+            <td><b>合规报告超 45 天未提交</b><br><span style="font-size:11.5px;color:var(--t3);">#11 · 09-09 02:00</span></td>
+            <td><span class="tag t-blue">报告缺失</span></td>
+            <td><span class="tag t-orange">中</span></td>
+            <td><span class="tag t-gray">定时</span></td>
+            <td>库车市 · 某商贸</td>
+            <td>郑执法</td>
+            <td>—</td>
+            <td><span class="tag t-blue">处理中</span></td>
+            <td><span class="btn b-pri" style="padding:4px 10px;font-size:12px;">详情</span> <span class="btn b-plain" style="padding:4px 10px;font-size:12px;">退回</span></td>
+          </tr>
+          <tr>
+            <td><b>现场检查不合格：后厨卫生</b><br><span style="font-size:11.5px;color:var(--t3);">#21 · 09-10 09:15</span></td>
+            <td><span class="tag t-red">信用异常</span></td>
+            <td><span class="tag t-red">高</span></td>
+            <td><span class="tag t-blue">实时</span></td>
+            <td>阿克苏市 · 光明乳品</td>
+            <td>吴执法</td>
+            <td>—</td>
+            <td><span class="tag t-green">已处置</span></td>
+            <td><span class="btn b-pri" style="padding:4px 10px;font-size:12px;">详情</span></td>
+          </tr>
+        </table>
+        <div style="display:flex;justify-content:flex-end;gap:6px;padding:12px 16px;font-size:12.5px;color:var(--t2);align-items:center;">
+          共 22 条 <span class="btn b-plain" style="padding:3px 9px;">‹</span><span class="btn b-pri" style="padding:3px 11px;">1</span><span class="btn b-plain" style="padding:3px 11px;">2</span><span class="btn b-plain" style="padding:3px 9px;">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wm">阿克苏市场监督管理局</div>
+</div>
+<div class="cap"><b>3 · 预警督办</b>六状态卡联动筛选 · hairline 表格<br>督办倒计时与升级链</div>
+</div>
+
+<!-- ============ 屏4 注册审核 ============ -->
+<div>
+<div class="mac scale8">
+  <div class="traffic">
+    <span class="tl" style="background:#FF5F57;"></span><span class="tl" style="background:#FEBC2E;"></span><span class="tl" style="background:#28C840;"></span>
+    <span class="wintitle">注册审核</span>
+  </div>
+  <div class="shell">
+    <div class="side">
+      <div style="display:flex;align-items:center;gap:9px;padding:2px 8px 12px;"><svg width="26" height="26" viewBox="0 0 96 96" fill="none" style="flex-shrink:0;"><circle cx="48" cy="48" r="46" fill="#9E0C22"/><circle cx="48" cy="48" r="42" fill="#C8102E"/><circle cx="48" cy="48" r="42" stroke="#F4DCA0" stroke-width="4"/><path d="M48 22 L50 27 L55 27.5 L51.3 30.8 L52.4 35.6 L48 33.2 L43.6 35.6 L44.7 30.8 L41 27.5 L46 27 Z" fill="#F4DCA0"/><path d="M48 39 C43.5 39 39 40.2 39 40.2 V52 C39 60 43 65 48 67.6 C53 65 57 60 57 52 V40.2 C57 40.2 52.5 39 48 39 Z" stroke="#F4DCA0" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M40.5 47 H55.5 M48 45 V58" stroke="#F4DCA0" stroke-width="3" stroke-linecap="round"/></svg><b style="font-size:13px;color:#1D1D1F;letter-spacing:-.2px;line-height:1.35;">阿克苏市场监管<br><span style="font-size:9px;color:#86868B;font-weight:500;">执法智慧平台</span></b></div>
+      <div class="ssearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>搜索</div>
+      <div class="sg">系统管理</div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14.8c2.4.6 4 2.4 4 5.2"/></svg>用户管理<span class="n">8</span></div>
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M9 12V7h6v5M12 7V4"/><path d="M6 12v8h12v-8"/></svg>操作日志</div>
+    </div>
+    <div class="content" style="display:flex;gap:16px;">
+      <!-- 左队列 -->
+      <div class="card" style="width:470px;padding:0;flex-shrink:0;">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--sep);display:flex;gap:8px;">
+          <span class="tag t-blue" style="padding:5px 14px;border-radius:7px;">待审核 8</span>
+          <span class="tag t-gray" style="padding:5px 14px;border-radius:7px;">已通过 3</span>
+          <span class="tag t-gray" style="padding:5px 14px;border-radius:7px;">已拒绝 2</span>
+        </div>
+        <div style="padding:0 0 6px;">
+          <div style="padding:13px 16px;border-bottom:1px solid rgba(0,0,0,.05);background:var(--sel);display:flex;gap:12px;align-items:center;">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(120,120,128,.12);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></div>
+            <div style="flex:1;">
+              <b style="font-size:13.5px;">E2E 测试企业 7312</b>
+              <p style="font-size:11.5px;color:var(--t3);margin-top:3px;">91652901E2E…7312 · 阿克苏市 · 09-10 09:32</p>
+            </div>
+            <span class="tag t-orange">待审核</span>
+          </div>
+          <div style="padding:13px 16px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;gap:12px;align-items:center;">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(120,120,128,.12);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7.5h6M9 11h6"/></svg></div>
+            <div style="flex:1;">
+              <b style="font-size:13.5px;">康宁大药房</b>
+              <p style="font-size:11.5px;color:var(--t3);margin-top:3px;">91652901MA7K…88F2 · 阿克苏市 · 09-09 16:20</p>
+            </div>
+            <span class="tag t-orange">待审核</span>
+          </div>
+          <div style="padding:13px 16px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;gap:12px;align-items:center;">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(120,120,128,.12);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-5h4v5"/></svg></div>
+            <div style="flex:1;">
+              <b style="font-size:13.5px;">柯坪县红沙河建材厂</b>
+              <p style="font-size:11.5px;color:var(--t3);margin-top:3px;">91652926MA7H…1109 · 柯坪县 · 09-09 11:04</p>
+            </div>
+            <span class="tag t-orange">待审核</span>
+          </div>
+          <div style="padding:13px 16px;display:flex;gap:12px;align-items:center;opacity:.55;">
+            <div style="width:38px;height:38px;border-radius:9px;background:rgba(120,120,128,.12);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></div>
+            <div style="flex:1;"><b style="font-size:13.5px;">E2E 拒绝企业 6218</b><p style="font-size:11.5px;color:var(--t3);margin-top:3px;">库车市 · 09-10 09:40</p></div>
+            <span class="tag t-red">已拒绝</span>
+          </div>
+        </div>
+      </div>
+      <!-- 右审核 -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:14px;">
+        <div class="chead" style="margin:0;">
+          <div><h2 style="font-size:19px;">E2E 测试企业 7312</h2><p style="font-size:12.5px;color:var(--t2);margin-top:3px;">餐饮服务 · 阿克苏市英巴扎街道 · 提交于 09-10 09:32</p></div>
+          <span class="tag t-blue">步骤 5/5 已提交</span>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <p style="font-size:11.5px;color:var(--t2);margin-bottom:10px;">证照材料</p>
+          <div style="display:flex;gap:12px;">
+            <div style="width:140px;"><div style="height:84px;border-radius:8px;background:#F2F2F7;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><p style="font-size:11px;color:var(--green);margin-top:6px;">营业执照 · OCR 一致</p></div>
+            <div style="width:140px;"><div style="height:84px;border-radius:8px;background:#F2F2F7;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></div><p style="font-size:11px;color:var(--green);margin-top:6px;">食品经营许可 · 2028</p></div>
+            <div style="width:140px;"><div style="height:84px;border-radius:8px;background:#F2F2F7;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg></div><p style="font-size:11px;color:var(--green);margin-top:6px;">健康证 · 2 张</p></div>
+            <div style="width:140px;"><div style="height:84px;border-radius:8px;background:#F2F2F7;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg></div><p style="font-size:11px;color:var(--green);margin-top:6px;">门头 / 店内照</p></div>
+          </div>
+        </div>
+        <div class="card" style="padding:14px 16px;flex:1;">
+          <p style="font-size:11.5px;color:var(--t2);">审核意见</p>
+          <div style="border:1px solid var(--sep);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--t1);margin-top:8px;">材料齐全，同意注册。</div>
+          <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end;">
+            <span class="btn b-red">拒绝（触发预警）</span>
+            <span class="btn b-pri" style="background:var(--green);">通过并创建企业账号</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--t3);margin-top:10px;">通过后自动创建企业档案与账号（初始密码 123456）· 分配属地：英巴扎街道市场监管所</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wm">阿克苏市场监督管理局</div>
+</div>
+<div class="cap"><b>4 · 注册审核</b>左队列右详情 · 证照四件核验<br>通过建号建档 · 拒绝触发预警</div>
+</div>
+
+</div>
+</body>
+</html>
