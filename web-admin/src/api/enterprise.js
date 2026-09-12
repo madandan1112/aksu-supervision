@@ -25,3 +25,12 @@ export function updateEnterpriseStatus(id, data) {
     data
   })
 }
+
+// 管理端 - 编辑企业信息
+export function adminUpdateEnterprise(id, data) {
+  return request({
+    url: `/admin/enterprise/${id}`,
+    method: 'put',
+    data
+  })
+}

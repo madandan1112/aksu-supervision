@@ -3,8 +3,8 @@
     <!-- 左侧菜单 -->
     <el-aside v-show="!isFullScreen" :width="isCollapse ? '64px' : '220px'" class="aside">
       <div class="logo">
-        <el-icon :size="28"><Shield /></el-icon>
-        <span v-show="!isCollapse" class="logo-text">阿克苏监管平台</span>
+        <MarketLogo :size="32" />
+        <span v-show="!isCollapse" class="logo-text">阿克苏地区市场监管<br/>执法智慧平台</span>
       </div>
       <el-scrollbar>
         <el-menu
@@ -12,9 +12,9 @@
           :collapse="isCollapse"
           :collapse-transition="false"
           router
-          background-color="#001529"
-          text-color="#ffffffa6"
-          active-text-color="#ffffff"
+          background-color="#ffffff"
+          text-color="#52525b"
+          active-text-color="#C8102E"
         >
           <el-menu-item index="/dashboard">
             <el-icon><Odometer /></el-icon>
@@ -35,6 +35,21 @@
             <el-icon><Bell /></el-icon>
             <template #title>预警管理</template>
           </el-menu-item>
+
+          <el-sub-menu index="enforcement">
+            <template #title>
+              <el-icon><Stamp /></el-icon>
+              <span>执法管理</span>
+            </template>
+            <el-menu-item index="/inspection">
+              <el-icon><Document /></el-icon>
+              <template #title>现场检查</template>
+            </el-menu-item>
+            <el-menu-item index="/rectification">
+              <el-icon><Edit /></el-icon>
+              <template #title>整改管理</template>
+            </el-menu-item>
+          </el-sub-menu>
 
           <el-menu-item index="/statistics">
             <el-icon><PieChart /></el-icon>
@@ -71,11 +86,15 @@
             </template>
             <el-menu-item index="/system/user">
               <el-icon><User /></el-icon>
-              <template #title>用户管理</template>
+              <template #title>后台用户管理</template>
             </el-menu-item>
             <el-menu-item index="/system/role">
               <el-icon><Lock /></el-icon>
               <template #title>角色权限</template>
+            </el-menu-item>
+            <el-menu-item index="/system/enterprise-type">
+              <el-icon><Document /></el-icon>
+              <template #title>企业行业分类</template>
             </el-menu-item>
             <el-menu-item index="/system/config">
               <el-icon><Tools /></el-icon>
@@ -102,11 +121,15 @@
           <el-sub-menu index="miniapp">
             <template #title>
               <el-icon><Iphone /></el-icon>
-              <span>小程序管理</span>
+              <span>用户管理</span>
             </template>
             <el-menu-item index="/miniapp/user">
               <el-icon><UserFilled /></el-icon>
-              <template #title>小程序用户</template>
+              <template #title>企业用户</template>
+            </el-menu-item>
+            <el-menu-item index="/enterprise/registration">
+              <el-icon><Stamp /></el-icon>
+              <template #title>注册审核</template>
             </el-menu-item>
           </el-sub-menu>
 
@@ -196,6 +219,8 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { removeToken } from '@/utils/auth'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import MarketLogo from '@/components/MarketLogo.vue'
+import { OfficeBuilding, Odometer, Document, List, Bell, Stamp, Edit, PieChart, DataAnalysis, Notebook, TrendCharts, Monitor, Setting, User, Lock, Tools, Tickets, Iphone, UserFilled, Fold, Expand, ArrowDown, EditPen, SwitchButton, Medal } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -272,24 +297,28 @@ const handlePasswordSubmit = async () => {
 }
 
 .aside {
-  background-color: #001529;
-  transition: width 0.28s;
+  background: #ffffff;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  box-shadow: 1px 0 6px rgba(24, 24, 27, 0.06);
 
   .logo {
-    height: 60px;
+    min-height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    border-bottom: 1px solid #ffffff1a;
+    color: #18181b;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #f0f0f2;
+    padding: 8px 12px;
 
     .logo-text {
-      white-space: nowrap;
-      overflow: hidden;
+      line-height: 1.4;
+      color: #18181b;
+      font-size: 13px;
     }
   }
 
@@ -297,12 +326,46 @@ const handlePasswordSubmit = async () => {
     border-right: none;
   }
 
+  :deep(.el-menu-item) {
+    height: 44px;
+    line-height: 44px;
+    margin: 2px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background-color: #faf1f2 !important;
+    }
+  }
+
   :deep(.el-menu-item.is-active) {
-    background-color: #1A73E8 !important;
+    background: linear-gradient(135deg, #D5263D, #B00E24) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(200, 16, 46, 0.3);
   }
 
   :deep(.el-sub-menu .el-menu-item.is-active) {
-    background-color: #1A73E8 !important;
+    background: linear-gradient(135deg, #D5263D, #B00E24) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(200, 16, 46, 0.3);
+  }
+
+  :deep(.el-sub-menu__title) {
+    height: 44px;
+    line-height: 44px;
+    margin: 2px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    &:hover {
+      background-color: #faf1f2 !important;
+    }
+  }
+
+  :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+    color: #C8102E;
   }
 }
 
@@ -313,13 +376,14 @@ const handlePasswordSubmit = async () => {
 }
 
 .header {
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.06);
   z-index: 10;
 
   .header-left {
@@ -329,11 +393,24 @@ const handlePasswordSubmit = async () => {
 
     .collapse-btn {
       cursor: pointer;
-      color: #333;
-      transition: color 0.3s;
+      color: var(--aksu-text-secondary);
+      transition: all 0.3s ease;
+      padding: 4px;
+      border-radius: 6px;
 
-      &:hover {
-        color: #1A73E8;
+    &:hover {
+      color: var(--aksu-primary);
+      background: rgba(200, 16, 46, 0.06);
+    }
+  }
+
+    :deep(.el-breadcrumb__item) {
+      .el-breadcrumb__inner {
+        font-weight: 500;
+        color: var(--aksu-text-secondary);
+      }
+      &:last-child .el-breadcrumb__inner {
+        color: var(--aksu-text-primary);
       }
     }
   }
@@ -342,13 +419,18 @@ const handlePasswordSubmit = async () => {
     .user-info {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      color: #333;
+      color: var(--aksu-text-primary);
       font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.25s ease;
 
       &:hover {
-        color: #1A73E8;
+        color: var(--aksu-primary);
+        background: rgba(200, 16, 46, 0.06);
       }
     }
   }
@@ -357,7 +439,7 @@ const handlePasswordSubmit = async () => {
 .main-content {
   flex: 1;
   overflow: auto;
-  background: #f0f2f5;
+  background: #F6F7F9;
   padding: 20px;
 }
 

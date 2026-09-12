@@ -166,7 +166,7 @@ const updateTime = () => {
 
 // KPI数据
 const kpiData = [
-  { label: '监管企业总数', value: '1,245', icon: 'OfficeBuilding', color: '#00D4FF', bg: 'linear-gradient(135deg, #1A73E8 0%, #00D4FF 100%)', trend: 5.2 },
+  { label: '监管企业总数', value: '1,245', icon: 'OfficeBuilding', color: '#00D4FF', bg: 'linear-gradient(135deg, #C8102E 0%, #00D4FF 100%)', trend: 5.2 },
   { label: '本月诉求量', value: '186', icon: 'Document', color: '#FFD700', bg: 'linear-gradient(135deg, #FF8C00 0%, #FFD700 100%)', trend: 12.3 },
   { label: '待处理诉求', value: '42', icon: 'DocumentChecked', color: '#FF6B6B', bg: 'linear-gradient(135deg, #FF4757 0%, #FF6B6B 100%)', trend: -8.1 },
   { label: '整改完成率', value: '92.6%', icon: 'TrendCharts', color: '#52C41A', bg: 'linear-gradient(135deg, #52C41A 0%, #00D4FF 100%)', trend: 3.5 },
@@ -206,7 +206,7 @@ const darkTheme = {
   textStyle: { color: '#8B9DC3' },
   tooltip: {
     backgroundColor: 'rgba(10, 22, 40, 0.9)',
-    borderColor: '#1A73E8',
+    borderColor: '#C8102E',
     borderWidth: 1,
     textStyle: { color: '#fff' }
   }
@@ -243,7 +243,7 @@ const initCharts = () => {
           itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0, 212, 255, 0.5)' }
         },
         data: [
-          { value: 342, name: '食品制造', itemStyle: { color: '#1A73E8' } },
+          { value: 342, name: '食品制造', itemStyle: { color: '#C8102E' } },
           { value: 218, name: '纺织服装', itemStyle: { color: '#00D4FF' } },
           { value: 156, name: '建材加工', itemStyle: { color: '#52C41A' } },
           { value: 198, name: '化工生产', itemStyle: { color: '#FFD700' } },
@@ -280,7 +280,7 @@ const initCharts = () => {
           { value: 42, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#FF6B6B' }, { offset: 1, color: '#FF4757' }] } } },
           { value: 68, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#FFD700' }, { offset: 1, color: '#FF8C00' }] } } },
           { value: 156, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#52C41A' }, { offset: 1, color: '#00D4FF' }] } } },
-          { value: 89, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#1A73E8' }, { offset: 1, color: '#00D4FF' }] } } }
+          { value: 89, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#C8102E' }, { offset: 1, color: '#00D4FF' }] } } }
         ],
         itemStyle: { borderRadius: [4, 4, 0, 0] }
       }]
@@ -346,7 +346,7 @@ const initCharts = () => {
             trailLength: 0.3,
             symbol: 'arrow',
             symbolSize: 5,
-            color: '#1A73E8'
+            color: '#C8102E'
           },
           lineStyle: {
             color: 'rgba(26, 115, 232, 0.3)',
@@ -373,7 +373,7 @@ const initCharts = () => {
           },
           itemStyle: {
             color: (params) => {
-              const colors = ['#00D4FF', '#1A73E8', '#52C41A', '#FFD700', '#FF6B6B', '#A78BFA', '#FF8C00', '#00FF88', '#FF69B4']
+              const colors = ['#00D4FF', '#C8102E', '#52C41A', '#FFD700', '#FF6B6B', '#A78BFA', '#FF8C00', '#00FF88', '#FF69B4']
               return colors[params.dataIndex % colors.length]
             },
             shadowBlur: 10,
@@ -439,7 +439,7 @@ const initCharts = () => {
           barWidth: '30%',
           data: [45, 52, 48, 63, 58, 72],
           itemStyle: {
-            color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#1A73E8' }, { offset: 1, color: '#00D4FF' }] },
+            color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#C8102E' }, { offset: 1, color: '#00D4FF' }] },
             borderRadius: [4, 4, 0, 0]
           }
         },
@@ -533,7 +533,7 @@ const initCharts = () => {
           { value: 8, itemStyle: { color: '#FF6B6B', borderRadius: [0, 4, 4, 0] } },
           { value: 5, itemStyle: { color: '#FFD700', borderRadius: [0, 4, 4, 0] } },
           { value: 3, itemStyle: { color: '#FF8C00', borderRadius: [0, 4, 4, 0] } },
-          { value: 2, itemStyle: { color: '#1A73E8', borderRadius: [0, 4, 4, 0] } },
+          { value: 2, itemStyle: { color: '#C8102E', borderRadius: [0, 4, 4, 0] } },
           { value: 1, itemStyle: { color: '#52C41A', borderRadius: [0, 4, 4, 0] } }
         ],
         label: {
@@ -631,11 +631,11 @@ onBeforeUnmount(() => {
     .header-right-line {
       flex: 1;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #1A73E8, #00D4FF);
+      background: linear-gradient(90deg, transparent, #C8102E, #00D4FF);
     }
 
     .header-right-line {
-      background: linear-gradient(90deg, #00D4FF, #1A73E8, transparent);
+      background: linear-gradient(90deg, #00D4FF, #C8102E, transparent);
     }
 
     .header-title {
@@ -747,7 +747,7 @@ onBeforeUnmount(() => {
       left: 0;
       width: 3px;
       height: 100%;
-      background: linear-gradient(180deg, #1A73E8, #00D4FF);
+      background: linear-gradient(180deg, #C8102E, #00D4FF);
     }
 
     .kpi-icon {
@@ -860,7 +860,7 @@ onBeforeUnmount(() => {
         transform: translateY(-50%);
         width: 4px;
         height: 16px;
-        background: linear-gradient(180deg, #1A73E8, #00D4FF);
+        background: linear-gradient(180deg, #C8102E, #00D4FF);
         border-radius: 2px;
       }
     }

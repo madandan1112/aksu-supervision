@@ -14,7 +14,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="level" label="级别" width="80" align="center" />
-        <el-table-column prop="orgName" label="所属组织" width="150" />
+<el-table-column prop="roleName" label="关联角色" width="120">
+          <template #default="{ row }">
+            <el-tag v-if="row.roleName" type="warning" size="small">{{ row.roleName }}</el-tag>
+            <span v-else class="text-muted">-</span>
+          </template>
+        </el-table-column>
         <el-table-column label="薪资范围" width="180">
           <template #default="{ row }">
             <span v-if="row.salaryRangeMin">{{ row.salaryRangeMin }} - {{ row.salaryRangeMax }}</span>
@@ -45,12 +50,17 @@
         <el-form-item label="岗位名称" prop="positionName"><el-input v-model="form.positionName" maxlength="100" /></el-form-item>
         <el-form-item label="类别">
           <el-select v-model="form.category" style="width:100%">
-            <el-option label="技术" value="TECHNICAL" /><el-option label="管理" value="MANAGEMENT" /><el-option label="行政" value="ADMIN" />
+            <el-option label="领导" value="LEADERSHIP" /><el-option label="技术" value="TECHNICAL" /><el-option label="管理" value="MANAGEMENT" /><el-option label="行政" value="ADMIN" />
           </el-select>
         </el-form-item>
         <el-form-item label="级别"><el-input-number v-model="form.level" :min="1" :max="20" style="width:100%" /></el-form-item>
         <el-form-item label="所属组织">
           <el-input v-model="form.orgId" placeholder="组织ID" />
+        </el-form-item>
+        <el-form-item label="关联角色">
+          <el-select v-model="form.roleId" clearable style="width:100%" placeholder="请选择关联角色">
+            <el-option v-for="role in roleOptions" :key="role.id" :label="role.roleName" :value="role.id" />
+          </el-select>
         </el-form-item>
         <el-row :gutter="16">
           <el-col :span="12"><el-form-item label="最低薪资"><el-input-number v-model="form.salaryRangeMin" :precision="2" style="width:100%" /></el-form-item></el-col>
@@ -69,10 +79,11 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import { getPositionList, createPosition, updatePosition, deletePosition } from '@/api/system'
+import { getPositionList, createPosition, updatePosition, deletePosition, getRoleList } from '@/api/system'
 
 const loading = ref(false)
 const tableData = ref([])
+const roleOptions = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const isEdit = ref(false)
@@ -80,10 +91,10 @@ const editId = ref(null)
 const submitLoading = ref(false)
 const formRef = ref(null)
 
-const categoryLabel = (c) => ({ TECHNICAL: '技术', MANAGEMENT: '管理', ADMIN: '行政' }[c] || c || '-')
-const categoryTagType = (c) => ({ TECHNICAL: '', MANAGEMENT: 'warning', ADMIN: 'info' }[c] || 'info')
+const categoryLabel = (c) => ({ LEADERSHIP: '领导', TECHNICAL: '技术', MANAGEMENT: '管理', ADMIN: '行政' }[c] || c || '-')
+const categoryTagType = (c) => ({ LEADERSHIP: 'danger', TECHNICAL: '', MANAGEMENT: 'warning', ADMIN: 'info' }[c] || 'info')
 
-const getDefaultForm = () => ({ positionCode: '', positionName: '', category: 'TECHNICAL', level: 1, orgId: null, salaryRangeMin: null, salaryRangeMax: null, sortOrder: 0, status: 1, description: '' })
+const getDefaultForm = () => ({ positionCode: '', positionName: '', category: 'TECHNICAL', level: 1, orgId: null, salaryRangeMin: null, salaryRangeMax: null, sortOrder: 0, status: 1, roleId: null, description: '' })
 const form = ref(getDefaultForm())
 const formRules = {
   positionCode: [{ required: true, message: '请输入岗位编码', trigger: 'blur' }],
@@ -92,13 +103,20 @@ const formRules = {
 
 const loadList = async () => {
   loading.value = true
-  try { const res = await getPositionList({ page: 0, size: 999 }); tableData.value = res.data?.content || res.data || [] }
+  try {
+    const [res, roleRes] = await Promise.all([
+      getPositionList({ page: 1, size: 999 }),
+      getRoleList()
+    ])
+    tableData.value = res.data?.list || res.data?.content || res.data || []
+    roleOptions.value = roleRes.data?.list || roleRes.data || []
+  }
   catch (e) { ElMessage.error('加载失败') }
   finally { loading.value = false }
 }
 
 const handleAdd = () => { isEdit.value = false; editId.value = null; form.value = getDefaultForm(); dialogTitle.value = '新增岗位'; dialogVisible.value = true }
-const handleEdit = (row) => { isEdit.value = true; editId.value = row.id; form.value = { positionCode: row.positionCode, positionName: row.positionName, category: row.category || 'TECHNICAL', level: row.level || 1, orgId: row.orgId, salaryRangeMin: row.salaryRangeMin, salaryRangeMax: row.salaryRangeMax, sortOrder: row.sortOrder || 0, status: row.status ?? 1, description: row.description || '' }; dialogTitle.value = '编辑岗位'; dialogVisible.value = true }
+const handleEdit = (row) => { isEdit.value = true; editId.value = row.id; form.value = { positionCode: row.positionCode, positionName: row.positionName, category: row.category || 'TECHNICAL', level: row.level || 1, orgId: row.orgId, salaryRangeMin: row.salaryRangeMin, salaryRangeMax: row.salaryRangeMax, sortOrder: row.sortOrder || 0, status: row.status ?? 1, roleId: row.roleId || null, description: row.description || '' }; dialogTitle.value = '编辑岗位'; dialogVisible.value = true }
 
 const handleSubmit = async () => {
   const valid = await formRef.value.validate().catch(() => false); if (!valid) return

@@ -34,7 +34,7 @@
             <div class="section-title">佐证材料</div>
             <div class="attachments-grid">
               <div v-for="(item, idx) in parseAttachments(appealData.attachments)" :key="idx" class="attachment-item">
-                <el-icon :size="32" color="#1A73E8"><Document /></el-icon>
+                <el-icon :size="32" color="#C8102E"><Document /></el-icon>
                 <div class="attachment-name">{{ item }}</div>
               </div>
             </div>
@@ -75,7 +75,7 @@
           <div class="detail-section">
             <div class="section-title">诉求分流</div>
             <div class="suggest-box">
-              <el-icon color="#1A73E8"><InfoFilled /></el-icon>
+              <el-icon color="#C8102E"><InfoFilled /></el-icon>
               <span>系统建议分流至：<strong>{{ suggestDept }}</strong></span>
             </div>
             <el-form :model="assignForm" :rules="assignRules" ref="assignFormRef" label-width="80px">

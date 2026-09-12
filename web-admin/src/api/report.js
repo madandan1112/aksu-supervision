@@ -27,6 +27,15 @@ export function getExpiringReports(params) {
   })
 }
 
+// 更新报告（重新上传）
+export function updateReport(id, data) {
+  return request({
+    url: `/admin/report/${id}`,
+    method: 'put',
+    data
+  })
+}
+
 // 企业上传报告（后端 @RequestBody）
 export function uploadReport(data) {
   return request({

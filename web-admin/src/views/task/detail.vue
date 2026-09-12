@@ -179,7 +179,7 @@ onMounted(() => fetchDetail())
 .action-buttons { display: flex; flex-direction: column; gap: 10px; }
 .stat-grid { display: flex; gap: 16px;
   .stat-item { flex: 1; text-align: center; padding: 12px 0; background: #f5f7fa; border-radius: 6px;
-    .stat-val { font-size: 24px; font-weight: 700; color: #1A73E8; }
+    .stat-val { font-size: 24px; font-weight: 700; color: #C8102E; }
     .stat-lbl { font-size: 12px; color: #909399; margin-top: 4px; }
   }
 }

@@ -109,7 +109,7 @@ const initCharts = async () => {
         tooltip: { trigger: 'axis' },
         xAxis: { type: 'category', data: indData.map(i => i.industry || i.name), axisLabel: { rotate: 30 } },
         yAxis: { type: 'value', minInterval: 1 },
-        series: [{ type: 'bar', data: indData.map(i => i.count || i.value), itemStyle: { color: '#1A73E8' } }]
+        series: [{ type: 'bar', data: indData.map(i => i.count || i.value), itemStyle: { color: '#C8102E' } }]
       })
     } catch { createChart(industryChartRef.value).setOption(noDataOption) }
 
@@ -136,13 +136,13 @@ const initCharts = async () => {
           { name: '产品质量', max: 100 }, { name: '合规报告', max: 100 },
           { name: '整改闭环', max: 100 }
         ] },
-        series: [{ type: 'radar', data: [{ value: [riskData.foodSafety || 60, riskData.specialEquip || 50, riskData.productQuality || 70, riskData.complianceReport || 80, riskData.rectification || 75], name: '风险指数', areaStyle: { opacity: 0.2 }, itemStyle: { color: '#1A73E8' } }] }]
+        series: [{ type: 'radar', data: [{ value: [riskData.foodSafety || 60, riskData.specialEquip || 50, riskData.productQuality || 70, riskData.complianceReport || 80, riskData.rectification || 75], name: '风险指数', areaStyle: { opacity: 0.2 }, itemStyle: { color: '#C8102E' } }] }]
       })
     } catch {
       createChart(riskChartRef.value).setOption({
         tooltip: {},
         radar: { indicator: [{ name: '食品安全', max: 100 }, { name: '特种设备', max: 100 }, { name: '产品质量', max: 100 }, { name: '合规报告', max: 100 }, { name: '整改闭环', max: 100 }] },
-        series: [{ type: 'radar', data: [{ value: [65, 50, 70, 80, 75], name: '风险指数', areaStyle: { opacity: 0.2 }, itemStyle: { color: '#1A73E8' } }] }]
+        series: [{ type: 'radar', data: [{ value: [65, 50, 70, 80, 75], name: '风险指数', areaStyle: { opacity: 0.2 }, itemStyle: { color: '#C8102E' } }] }]
       })
     }
 
@@ -154,7 +154,7 @@ const initCharts = async () => {
       xAxis: { type: 'category', data: months },
       yAxis: { type: 'value' },
       series: [
-        { name: '创建', type: 'line', data: [8, 12, 15, 10, 18, 14], smooth: true, itemStyle: { color: '#1A73E8' } },
+        { name: '创建', type: 'line', data: [8, 12, 15, 10, 18, 14], smooth: true, itemStyle: { color: '#C8102E' } },
         { name: '完成', type: 'line', data: [6, 10, 13, 9, 15, 12], smooth: true, itemStyle: { color: '#52c41a' } }
       ]
     })
@@ -173,7 +173,7 @@ const initCharts = async () => {
       tooltip: { trigger: 'item' },
       legend: { bottom: 0 },
       series: [{ type: 'pie', radius: ['30%', '60%'], data: [
-        { value: 40, name: '日常检查', itemStyle: { color: '#1A73E8' } },
+        { value: 40, name: '日常检查', itemStyle: { color: '#C8102E' } },
         { value: 25, name: '专项检查', itemStyle: { color: '#faad14' } },
         { value: 20, name: '随机抽查', itemStyle: { color: '#52c41a' } },
         { value: 15, name: '投诉核查', itemStyle: { color: '#f5222d' } }

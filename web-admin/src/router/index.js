@@ -64,6 +64,20 @@ const routes = [
         component: () => import('@/views/enterprise/detail.vue'),
         meta: { title: '企业详情', hidden: true }
       },
+      // 执法管理 - 现场检查
+      {
+        path: 'inspection',
+        name: 'InspectionList',
+        component: () => import('@/views/inspection/list.vue'),
+        meta: { title: '现场检查', icon: 'Document' }
+      },
+      // 执法管理 - 整改管理
+      {
+        path: 'rectification',
+        name: 'RectificationList',
+        component: () => import('@/views/rectification/list.vue'),
+        meta: { title: '整改管理', icon: 'Edit' }
+      },
       // 报告管理
       {
         path: 'report',
@@ -142,12 +156,25 @@ const routes = [
         component: () => import('@/views/system/job-title/index.vue'),
         meta: { title: '职务管理', icon: 'Medal' }
       },
+      {
+        path: 'system/enterprise-type',
+        name: 'EnterpriseTypeManage',
+        component: () => import('@/views/system/enterprise-type/index.vue'),
+        meta: { title: '企业行业分类', icon: 'Collection' }
+      },
       // 小程序用户管理
       {
         path: 'miniapp/user',
         name: 'MiniappUser',
         component: () => import('@/views/miniapp/user.vue'),
         meta: { title: '小程序用户', icon: 'UserFilled' }
+      },
+      // 企业注册审核
+      {
+        path: 'enterprise/registration',
+        name: 'EnterpriseRegistration',
+        component: () => import('@/views/enterprise/registration/index.vue'),
+        meta: { title: '注册审核', icon: 'Stamp' }
       },
       // 后台管理 - 企业信息查看
       {

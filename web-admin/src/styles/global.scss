@@ -1,4 +1,47 @@
-/* 全局样式 */
+/* ============================
+   阿克苏监管平台 - 全局美化样式
+   ============================ */
+
+/* ---- 字体 ---- */
+@font-face {
+  font-family: 'AksuGov';
+  src: local('Microsoft YaHei'), local('PingFang SC'), local('Noto Sans SC'), local('sans-serif');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  /* 品牌色系（市监红 V2） */
+  --aksu-primary: #C8102E;
+  --aksu-primary-light: #D5263D;
+  --aksu-primary-dark: #A50D22;
+  --aksu-gold: #C9A063;
+  --aksu-gold-light: #E5C893;
+  --aksu-accent: #34C759;
+  --aksu-warn: #FF9500;
+  --aksu-danger: #E5484D;
+
+  /* 中性色 */
+  --aksu-text-primary: #18181b;
+  --aksu-text-regular: #3f3f46;
+  --aksu-text-secondary: #8a8a9a;
+  --aksu-text-placeholder: #b0b0be;
+  --aksu-bg-page: #F6F7F9;
+  --aksu-bg-card: #ffffff;
+  --aksu-border: #e8ecf1;
+  --aksu-shadow: 0 2px 12px rgba(24, 24, 27, 0.06);
+  --aksu-shadow-hover: 0 4px 20px rgba(200, 16, 46, 0.12);
+
+  /* 圆角 */
+  --aksu-radius-sm: 8px;
+  --aksu-radius-md: 12px;
+  --aksu-radius-lg: 16px;
+
+  /* 字体族 */
+  --aksu-font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
+  --aksu-font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'Consolas', monospace;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,36 +51,58 @@
 html, body {
   width: 100%;
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: var(--aksu-font-family);
   font-size: 14px;
-  color: #333;
-  background: #f0f2f5;
+  line-height: 1.6;
+  color: var(--aksu-text-primary);
+  background: var(--aksu-bg-page);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* 滚动条 */
+/* ---- 滚动条美化 ---- */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #d3d6dc;
   border-radius: 3px;
+  &:hover {
+    background: #b8bcc4;
+  }
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* 通用卡片 */
+/* ---- 选中文字 ---- */
+::selection {
+  background: rgba(200, 16, 46, 0.15);
+  color: var(--aksu-primary-dark);
+}
+
+/* ---- 通用页面容器 ---- */
 .page-container {
+  padding: 20px;
+  background: var(--aksu-bg-page);
+  min-height: 100vh;
+
   .filter-card {
     margin-bottom: 16px;
+    border-radius: var(--aksu-radius-md) !important;
+    border: none;
+    box-shadow: var(--aksu-shadow);
   }
 
   .table-card {
+    border-radius: var(--aksu-radius-md) !important;
+    border: none;
+    box-shadow: var(--aksu-shadow);
+
     .pagination-wrapper {
       display: flex;
       justify-content: flex-end;
@@ -46,20 +111,20 @@ html, body {
   }
 }
 
-/* 表格操作列 */
+/* ---- 表格操作列 ---- */
 .table-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-/* 状态标签 */
+/* ---- 状态标签 ---- */
 .status-tag {
   min-width: 64px;
   text-align: center;
 }
 
-/* 统计卡片 */
+/* ---- 统计卡片 ---- */
 .stat-card {
   .stat-content {
     display: flex;
@@ -69,21 +134,24 @@ html, body {
     .stat-info {
       .stat-label {
         font-size: 14px;
-        color: #909399;
+        color: var(--aksu-text-secondary);
         margin-bottom: 8px;
+        font-weight: 500;
       }
 
       .stat-value {
-        font-size: 28px;
+        font-size: 30px;
         font-weight: 700;
-        color: #303133;
+        color: var(--aksu-text-primary);
+        letter-spacing: -0.5px;
+        font-variant-numeric: tabular-nums;
       }
     }
 
     .stat-icon {
       width: 64px;
       height: 64px;
-      border-radius: 12px;
+      border-radius: var(--aksu-radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -93,37 +161,153 @@ html, body {
   }
 }
 
-/* 详情页 */
+/* ---- 详情页 ---- */
 .detail-section {
   margin-bottom: 24px;
 
   .section-title {
     font-size: 16px;
     font-weight: 600;
-    color: #303133;
+    color: var(--aksu-text-primary);
     margin-bottom: 16px;
-    padding-left: 10px;
-    border-left: 3px solid #1A73E8;
+    padding-left: 12px;
+    border-left: 3px solid var(--aksu-primary);
+    letter-spacing: 0.5px;
   }
 }
 
-/* Element Plus 覆盖 */
+/* ---- Element Plus 全局覆盖美化 ---- */
+
+/* 卡片 */
 .el-card {
-  border-radius: 8px;
+  border-radius: var(--aksu-radius-md) !important;
+  border: none;
+  box-shadow: var(--aksu-shadow);
+  transition: box-shadow 0.3s ease;
+  &:hover {
+    box-shadow: var(--aksu-shadow-hover);
+  }
 }
 
-.el-table th.el-table__cell {
-  background-color: #f5f7fa !important;
-  color: #303133;
-  font-weight: 600;
+/* 表格 */
+.el-table {
+  --el-table-border-color: var(--aksu-border);
+  --el-table-header-bg-color: #faf7f7;
+  --el-table-row-hover-bg-color: #fdf2f4;
+  border-radius: var(--aksu-radius-sm);
+
+  th.el-table__cell {
+    background-color: #faf7f7 !important;
+    color: var(--aksu-text-primary);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+
+  td.el-table__cell {
+    color: var(--aksu-text-regular);
+    font-size: 13px;
+  }
 }
 
-.el-dialog__header {
-  border-bottom: 1px solid #ebeef5;
-  padding-bottom: 16px;
+/* 按钮 */
+.el-button--primary {
+  --el-button-bg-color: var(--aksu-primary);
+  --el-button-border-color: var(--aksu-primary);
+  --el-button-hover-bg-color: #a00d25;
+  --el-button-hover-border-color: #a00d25;
+  border-radius: var(--aksu-radius-sm);
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
-.el-dialog__footer {
-  border-top: 1px solid #ebeef5;
-  padding-top: 16px;
+.el-button {
+  border-radius: var(--aksu-radius-sm);
+  font-weight: 500;
+}
+
+/* 输入框 */
+.el-input__wrapper {
+  border-radius: var(--aksu-radius-sm) !important;
+  transition: box-shadow 0.25s ease;
+}
+
+.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--aksu-primary) inset;
+}
+
+/* 对话框 */
+.el-dialog {
+  border-radius: var(--aksu-radius-lg) !important;
+  overflow: hidden;
+
+  .el-dialog__header {
+    border-bottom: 1px solid var(--aksu-border);
+    padding: 16px 20px;
+    font-weight: 600;
+  }
+
+  .el-dialog__footer {
+    border-top: 1px solid var(--aksu-border);
+    padding: 16px 20px;
+  }
+
+  .el-dialog__body {
+    padding: 20px;
+  }
+}
+
+/* 标签 */
+.el-tag {
+  border-radius: 20px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* 分页 */
+.el-pagination {
+  --el-pagination-button-bg-color: #fff;
+  .el-pager li {
+    border-radius: var(--aksu-radius-sm);
+    font-weight: 500;
+  }
+}
+
+/* 表单 */
+.el-form-item__label {
+  font-weight: 500;
+  color: var(--aksu-text-primary);
+}
+
+/* 选择器 */
+.el-select .el-select__wrapper {
+  border-radius: var(--aksu-radius-sm) !important;
+}
+
+/* ---- 动效 ---- */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* ---- 专用类 ---- */
+.text-mono {
+  font-family: var(--aksu-font-mono);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--aksu-primary), var(--aksu-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }

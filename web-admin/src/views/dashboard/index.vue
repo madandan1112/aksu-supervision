@@ -1,109 +1,118 @@
 <template>
   <div class="dashboard-container">
-    <!-- 待办提醒 -->
-    <el-row v-if="hasPending" :gutter="16" class="pending-row">
-      <el-col :span="24">
-        <el-alert type="warning" :closable="false" show-icon>
-          <template #title>
-            <span>
-              您有 <b>{{ pendingTotal }}</b> 条待办事项需要处理：
-              <span v-if="pendingAppeals > 0">诉求 <b>{{ pendingAppeals }}</b> 条</span>
-              <span v-if="pendingAlerts > 0">；预警 <b>{{ pendingAlerts }}</b> 条</span>
-              <span v-if="pendingTasks > 0">；任务 <b>{{ pendingTasks }}</b> 条</span>
-            </span>
-          </template>
-        </el-alert>
-      </el-col>
-    </el-row>
+    <!-- 系统标题横幅 -->
+    <div class="system-banner">
+      <div class="system-title">
+        <MarketLogo :size="36" />
+        <h1>阿克苏地区市场监管执法智慧平台</h1>
+      </div>
+      <div class="system-subtitle">智慧监管 · 数据赋能 · 精准治理</div>
+    </div>
 
-    <!-- 统计卡片 - 可点击跳转 -->
-    <el-row :gutter="16" class="stat-row">
-      <el-col :span="6" v-for="item in statCards" :key="item.key">
-        <el-card shadow="hover" class="stat-card clickable" @click="handleCardClick(item)">
-          <div class="stat-content">
-            <div class="stat-info">
-              <div class="stat-label">{{ item.label }}</div>
-              <div class="stat-value">{{ item.value }}</div>
-              <div v-if="item.pending > 0" class="stat-pending">
-                <el-tag type="danger" size="small" effect="dark">{{ item.pending }} 待处理</el-tag>
-              </div>
-            </div>
-            <div class="stat-icon" :style="{ backgroundColor: item.color }">
-              <el-icon :size="28"><component :is="item.icon" /></el-icon>
-            </div>
+    <!-- 欢迎横幅 -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>欢迎回来，{{ username }}</h2>
+        <p>{{ todayStr }} | 今日待办 {{ pendingTotal }} 项</p>
+      </div>
+      <div class="welcome-illustration">
+        <el-icon size="48" style="color: rgba(255,255,255,0.3)"><OfficeBuilding /></el-icon>
+      </div>
+    </div>
+
+    <!-- 待办提醒 -->
+    <div v-if="hasPending" class="pending-bar">
+      <div class="pending-item" v-if="pendingAppeals > 0" @click="$router.push('/appeal')">
+        <span class="pending-dot danger"></span>
+        <span>{{ pendingAppeals }} 条待处理诉求</span>
+      </div>
+      <div class="pending-item" v-if="pendingAlerts > 0" @click="$router.push('/alert')">
+        <span class="pending-dot warning"></span>
+        <span>{{ pendingAlerts }} 条待处理预警</span>
+      </div>
+      <div class="pending-item" v-if="pendingTasks > 0" @click="$router.push('/task')">
+        <span class="pending-dot info"></span>
+        <span>{{ pendingTasks }} 条待执行任务</span>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stat-grid">
+      <div class="stat-card" v-for="item in statCards" :key="item.key" :style="{'--accent': item.color}" @click="handleCardClick(item)">
+        <div class="card-top">
+          <div class="card-label">{{ item.label }}</div>
+          <div class="card-icon" :style="{background: item.color + '1F', color: item.color}">
+            <el-icon :size="22"><component :is="item.icon" /></el-icon>
           </div>
-          <div class="stat-footer">
-            <span class="click-hint">点击查看详情 <el-icon><ArrowRight /></el-icon></span>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </div>
+        <div class="card-value">{{ item.value }}</div>
+        <div class="card-percent" v-if="item.total > 0">{{ item.value }}家，占总数{{ item.percent }}%</div>
+        <div class="card-pending" v-if="item.pending > 0">
+          <span class="pending-badge">{{ item.pending }} 待处理</span>
+        </div>
+      </div>
+    </div>
 
     <!-- 图表区 -->
-    <el-row :gutter="16" class="chart-row">
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <template #header>
-            <span>诉求状态分布</span>
-          </template>
-          <div ref="pieChartRef" class="chart-wrapper"></div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <template #header>
-            <span>预警等级分布</span>
-          </template>
-          <div ref="barChartRef" class="chart-wrapper"></div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">诉求状态分布</div>
+        <div ref="pieChartRef" class="chart-body"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">预警等级分布</div>
+        <div ref="barChartRef" class="chart-body"></div>
+      </div>
+    </div>
 
-    <!-- 列表区 - 可点击跳转 -->
-    <el-row :gutter="16" class="list-row">
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>最近诉求</span>
-              <el-button text type="primary" @click="$router.push('/appeal')">查看全部</el-button>
+    <!-- 列表区 -->
+    <div class="list-grid">
+      <div class="list-card">
+        <div class="list-header">
+          <span class="list-title">最近诉求</span>
+          <el-button text type="primary" size="small" @click="$router.push('/appeal')">查看全部 →</el-button>
+        </div>
+        <div class="list-body">
+          <div v-for="item in recentAppeals" :key="item.id" class="list-item" @click="handleAppealRowClick(item)">
+            <div class="item-main">
+              <span class="item-title">{{ item.title }}</span>
+              <el-tag :type="statusTypeMap[item.status] || 'info'" size="small" effect="light">{{ statusLabel[item.status] || item.status }}</el-tag>
             </div>
-          </template>
-          <el-table :data="recentAppeals" size="small" :show-header="true" @row-click="handleAppealRowClick" class="clickable-table">
-            <el-table-column prop="title" label="标题" min-width="140" show-overflow-tooltip />
-            <el-table-column prop="appealType" label="类型" width="100" />
-            <el-table-column prop="status" label="状态" width="80">
-              <template #default="{ row }">
-                <el-tag :type="statusTypeMap[row.status] || 'info'" size="small">{{ statusLabel[row.status] || row.status }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="createTime" label="时间" width="160" />
-          </el-table>
-          <el-empty v-if="recentAppeals.length === 0" description="暂无数据" :image-size="60" />
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>待处理预警</span>
-              <el-button text type="primary" @click="$router.push('/alert')">查看全部</el-button>
+            <div class="item-meta">
+              <span>{{ item.appealType }}</span>
+              <span>{{ item.createTime }}</span>
             </div>
-          </template>
-          <el-table :data="recentAlerts" size="small" :show-header="true" @row-click="handleAlertRowClick" class="clickable-table">
-            <el-table-column prop="title" label="预警内容" min-width="140" show-overflow-tooltip />
-            <el-table-column prop="level" label="等级" width="80">
-              <template #default="{ row }">
-                <el-tag :type="levelTypeMap[row.level] || 'info'" size="small">{{ levelLabel[row.level] || row.level }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="enterpriseName" label="企业" width="120" show-overflow-tooltip />
-            <el-table-column prop="createTime" label="时间" width="160" />
-          </el-table>
-          <el-empty v-if="recentAlerts.length === 0" description="暂无数据" :image-size="60" />
-        </el-card>
-      </el-col>
-    </el-row>
+          </div>
+          <div v-if="recentAppeals.length === 0" class="empty-state">暂无诉求</div>
+        </div>
+      </div>
+      <div class="list-card">
+        <div class="list-header">
+          <span class="list-title">待处理预警</span>
+          <el-button text type="primary" size="small" @click="$router.push('/alert')">查看全部 →</el-button>
+        </div>
+        <div class="list-body">
+          <div v-for="item in recentAlerts" :key="item.id" class="list-item" @click="handleAlertRowClick(item)">
+            <div class="item-main">
+              <span class="item-title">{{ item.title }}</span>
+              <el-tag :type="levelTypeMap[item.level] || 'info'" size="small" effect="light">{{ levelLabel[item.level] || item.level }}</el-tag>
+            </div>
+            <div class="item-meta">
+              <span>{{ item.enterpriseName }}</span>
+              <span>{{ item.createTime }}</span>
+            </div>
+          </div>
+          <div v-if="recentAlerts.length === 0" class="empty-state">暂无预警</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="footer-copyright">
+      <span>由新疆璟达智创科技有限公司开发</span>
+      <span class="divider">|</span>
+      <span>中国电信云服务技术支持</span>
+    </div>
   </div>
 </template>
 
@@ -112,12 +121,22 @@ import { ref, computed, onMounted, onBeforeUnmount, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
 import { getDashboardOverview } from '@/api/dashboard'
+import MarketLogo from '@/components/MarketLogo.vue'
+import { OfficeBuilding, TrendCharts, DataLine, Warning, DocumentChecked, Bell, List, Stamp, Edit } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const pieChartRef = ref(null)
 const barChartRef = ref(null)
 let pieChart = null
 let barChart = null
+
+// 优先显示登录时保存的真实姓名，其次用户名，最后兜底
+const username = ref(localStorage.getItem('aksu_supervision_realName') || localStorage.getItem('aksu_supervision_username') || '管理员')
+const todayStr = computed(() => {
+  const d = new Date()
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 星期${weekdays[d.getDay()]}`
+})
 
 const statusTypeMap = {
   'PENDING': 'warning', 'EVALUATED': '', 'ASSIGNED': 'primary', 'HANDLING': 'primary', 'HANDLED': 'success'
@@ -129,10 +148,12 @@ const levelTypeMap = { 'HIGH': 'danger', 'MEDIUM': 'warning', 'LOW': 'info' }
 const levelLabel = { 'HIGH': '高', 'MEDIUM': '中', 'LOW': '低' }
 
 const statCards = ref([
-  { key: 'enterprise', label: '企业总数', value: 0, pending: 0, icon: 'OfficeBuilding', color: '#1A73E8', route: '/enterprise' },
-  { key: 'appeal', label: '诉求总数', value: 0, pending: 0, icon: 'Document', color: '#faad14', route: '/appeal' },
-  { key: 'task', label: '任务总数', value: 0, pending: 0, icon: 'List', color: '#52c41a', route: '/task' },
-  { key: 'alert', label: '预警数', value: 0, pending: 0, icon: 'Warning', color: '#f5222d', route: '/alert' }
+  { key: 'enterprise', label: '企业总数', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(TrendCharts), color: '#C8102E', route: '/enterprise' },
+  { key: 'appeal', label: '诉求总数', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(DocumentChecked), color: '#faad14', route: '/appeal' },
+  { key: 'task', label: '任务总数', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(List), color: '#52c41a', route: '/task' },
+  { key: 'alert', label: '预警数', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(Warning), color: '#f5222d', route: '/alert' },
+  { key: 'inspection', label: '检查记录', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(Stamp), color: '#722ed1', route: '/inspection' },
+  { key: 'rectification', label: '整改通知', value: 0, pending: 0, total: 0, percent: 0, icon: markRaw(Edit), color: '#eb2f96', route: '/rectification' }
 ])
 
 const recentAppeals = ref([])
@@ -145,19 +166,14 @@ const pendingTasks = ref(0)
 const pendingTotal = computed(() => pendingAppeals.value + pendingAlerts.value + pendingTasks.value)
 const hasPending = computed(() => pendingTotal.value > 0)
 
-// 统计卡片点击跳转
 const handleCardClick = (item) => {
-  if (item.route) {
-    router.push(item.route)
-  }
+  if (item.route) router.push(item.route)
 }
 
-// 诉求行点击跳转
 const handleAppealRowClick = (row) => {
   router.push(`/appeal/${row.id}`)
 }
 
-// 预警行点击跳转
 const handleAlertRowClick = (row) => {
   router.push('/alert')
 }
@@ -166,13 +182,36 @@ const fetchData = async () => {
   try {
     const res = await getDashboardOverview()
     const d = res.data
+    
+    // 计算总数用于百分比
+    const totalCount = d.enterpriseCount || 0
+    
     statCards.value[0].value = d.enterpriseCount || 0
+    statCards.value[0].total = totalCount
+    statCards.value[0].percent = totalCount > 0 ? Math.round((d.enterpriseCount || 0) / totalCount * 100) : 0
+    
     statCards.value[1].value = d.appealCount || 0
     statCards.value[1].pending = d.pendingAppeals || 0
+    statCards.value[1].total = d.appealCount || 0
+    statCards.value[1].percent = d.appealCount > 0 ? Math.round((d.pendingAppeals || 0) / d.appealCount * 100) : 0
+    
     statCards.value[2].value = d.taskCount || 0
     statCards.value[2].pending = d.pendingTasks || 0
+    statCards.value[2].total = d.taskCount || 0
+    statCards.value[2].percent = d.taskCount > 0 ? Math.round((d.pendingTasks || 0) / d.taskCount * 100) : 0
+    
     statCards.value[3].value = d.alertCount || 0
     statCards.value[3].pending = d.pendingAlerts || 0
+    statCards.value[3].total = d.alertCount || 0
+    statCards.value[3].percent = d.alertCount > 0 ? Math.round((d.pendingAlerts || 0) / d.alertCount * 100) : 0
+    
+    statCards.value[4].value = d.inspectionCount || 0
+    statCards.value[4].total = d.inspectionCount || 0
+    statCards.value[4].percent = 100
+    
+    statCards.value[5].value = d.rectificationCount || 0
+    statCards.value[5].total = d.rectificationCount || 0
+    statCards.value[5].percent = 100
 
     pendingAppeals.value = d.pendingAppeals || 0
     pendingAlerts.value = d.pendingAlerts || 0
@@ -182,9 +221,8 @@ const fetchData = async () => {
     recentAppeals.value = d.recentAppeals || []
     recentAlerts.value = d.recentAlerts || []
 
-    // 企业用户不显示任务卡片
     if (userType.value === 'enterprise' || userType.value === 'enterprise_user') {
-      statCards.value = statCards.value.filter(c => c.key !== 'task')
+      statCards.value = statCards.value.filter(c => c.key !== 'task' && c.key !== 'inspection')
     }
 
     updateCharts(d)
@@ -200,7 +238,7 @@ const updateCharts = (d) => {
       series: [{
         data: [
           { value: appealByStatus.PENDING || 0, name: '待处理', itemStyle: { color: '#faad14' } },
-          { value: appealByStatus.ASSIGNED || 0, name: '已分配', itemStyle: { color: '#1A73E8' } },
+          { value: appealByStatus.ASSIGNED || 0, name: '已分配', itemStyle: { color: '#C8102E' } },
           { value: appealByStatus.HANDLING || 0, name: '处理中', itemStyle: { color: '#e6a23c' } },
           { value: appealByStatus.HANDLED || 0, name: '已处理', itemStyle: { color: '#52c41a' } }
         ]
@@ -212,9 +250,9 @@ const updateCharts = (d) => {
   if (barChart) {
     barChart.setOption({
       series: [
-        { name: '高', type: 'bar', data: [alertByLevel.HIGH || 0], itemStyle: { color: '#f5222d' } },
-        { name: '中', type: 'bar', data: [alertByLevel.MEDIUM || 0], itemStyle: { color: '#faad14' } },
-        { name: '低', type: 'bar', data: [alertByLevel.LOW || 0], itemStyle: { color: '#909399' } }
+        { name: '高', type: 'bar', data: [alertByLevel.HIGH || 0], itemStyle: { color: '#f5222d' }, label: { show: true, position: 'top', formatter: '{c}' } },
+        { name: '中', type: 'bar', data: [alertByLevel.MEDIUM || 0], itemStyle: { color: '#faad14' }, label: { show: true, position: 'top', formatter: '{c}' } },
+        { name: '低', type: 'bar', data: [alertByLevel.LOW || 0], itemStyle: { color: '#909399' }, label: { show: true, position: 'top', formatter: '{c}' } }
       ]
     })
   }
@@ -222,49 +260,52 @@ const updateCharts = (d) => {
 
 const initPieChart = () => {
   pieChart = markRaw(echarts.init(pieChartRef.value))
-  const option = {
+  pieChart.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
     legend: { bottom: 0, type: 'scroll' },
     series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center: ['50%', '45%'],
+      type: 'pie', radius: ['40%', '70%'], center: ['50%', '45%'],
       avoidLabelOverlap: false,
       itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
-      label: { show: false },
+      label: { show: true, formatter: '{b}\n{c} ({d}%)', fontSize: 12 },
       emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
       data: [
         { value: 0, name: '待处理', itemStyle: { color: '#faad14' } },
-        { value: 0, name: '已分配', itemStyle: { color: '#1A73E8' } },
+        { value: 0, name: '已分配', itemStyle: { color: '#C8102E' } },
         { value: 0, name: '处理中', itemStyle: { color: '#e6a23c' } },
         { value: 0, name: '已处理', itemStyle: { color: '#52c41a' } }
       ]
     }]
-  }
-  pieChart.setOption(option)
+  })
+  pieChart.on('click', (params) => {
+    const statusMap = { '待处理': 'PENDING', '已分配': 'ASSIGNED', '处理中': 'HANDLING', '已处理': 'HANDLED' }
+    const status = statusMap[params.name]
+    if (status) router.push({ path: '/appeal', query: { status } })
+  })
 }
 
 const initBarChart = () => {
   barChart = markRaw(echarts.init(barChartRef.value))
-  const option = {
+  barChart.setOption({
     tooltip: { trigger: 'axis' },
     legend: { data: ['高', '中', '低'], bottom: 0 },
-    grid: { top: 20, right: 20, bottom: 40, left: 50 },
+    grid: { top: 30, right: 20, bottom: 40, left: 50 },
     xAxis: { type: 'category', data: ['预警等级'] },
     yAxis: { type: 'value', minInterval: 1 },
     series: [
-      { name: '高', type: 'bar', data: [0], itemStyle: { color: '#f5222d' } },
-      { name: '中', type: 'bar', data: [0], itemStyle: { color: '#faad14' } },
-      { name: '低', type: 'bar', data: [0], itemStyle: { color: '#909399' } }
+      { name: '高', type: 'bar', data: [0], itemStyle: { color: '#f5222d' }, label: { show: true, position: 'top', formatter: '{c}' } },
+      { name: '中', type: 'bar', data: [0], itemStyle: { color: '#faad14' }, label: { show: true, position: 'top', formatter: '{c}' } },
+      { name: '低', type: 'bar', data: [0], itemStyle: { color: '#909399' }, label: { show: true, position: 'top', formatter: '{c}' } }
     ]
-  }
-  barChart.setOption(option)
+  })
+  barChart.on('click', (params) => {
+    const levelMap = { '高': 'HIGH', '中': 'MEDIUM', '低': 'LOW' }
+    const level = levelMap[params.seriesName]
+    if (level) router.push({ path: '/alert', query: { level } })
+  })
 }
 
-const handleResize = () => {
-  pieChart?.resize()
-  barChart?.resize()
-}
+const handleResize = () => { pieChart?.resize(); barChart?.resize() }
 
 onMounted(() => {
   initPieChart()
@@ -282,85 +323,212 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .dashboard-container {
-  .pending-row {
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 系统标题横幅 */
+.system-banner {
+  background: linear-gradient(135deg, #C8102E, #D5263D);
+  padding: 20px 32px;
+  margin-bottom: 16px;
+  color: #fff;
+  text-align: center;
+  
+  .system-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+  }
+  
+  .system-subtitle {
+    font-size: 13px;
+    opacity: 0.8;
+    letter-spacing: 4px;
+  }
+}
+
+.welcome-banner {
+  background: linear-gradient(135deg, #C8102E, #D5263D);
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  color: #fff;
+  h2 { margin: 0 0 4px 0; font-size: 22px; }
+  p { margin: 0; font-size: 14px; opacity: 0.85; }
+}
+
+/* 待办提醒 */
+.pending-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.pending-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  cursor: pointer;
+  font-size: 13px;
+  color: #606266;
+  transition: all 0.2s;
+  &:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+}
+.pending-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  &.danger { background: #f56c6c; }
+  &.warning { background: #e6a23c; }
+  &.info { background: #909399; }
+}
+
+/* 统计卡片网格 */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
-    b { color: #f56c6c; }
   }
+  .card-label { font-size: 13px; color: #909399; }
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-value { font-size: 28px; font-weight: 700; color: #303133; }
+  .card-percent {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 4px;
+  }
+  .card-pending { margin-top: 6px; }
+  .pending-badge {
+    font-size: 11px;
+    color: #f56c6c;
+    background: #fef0f0;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+}
 
-  .stat-row {
-    margin-bottom: 16px;
-    .stat-card {
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-      .stat-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        .stat-info {
-          .stat-label {
-            font-size: 14px;
-            color: #909399;
-            margin-bottom: 8px;
-          }
-          .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #303133;
-          }
-          .stat-pending {
-            margin-top: 6px;
-          }
-        }
-        .stat-icon {
-          width: 56px;
-          height: 56px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-        }
-      }
-      .stat-footer {
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px solid #f0f0f0;
-        .click-hint {
-          font-size: 12px;
-          color: #409eff;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
-    }
-  }
+/* 图表 */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.chart-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+}
+.chart-body { height: 280px; cursor: pointer; }
 
-  .chart-row {
-    margin-bottom: 16px;
-    .chart-wrapper {
-      height: 280px;
-    }
-  }
+/* 列表 */
+.list-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.list-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.list-title { font-size: 15px; font-weight: 600; color: #303133; }
+.list-body { max-height: 300px; overflow-y: auto; }
+.list-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  &:last-child { border-bottom: none; }
+  &:hover { background: #fafbfc; }
+}
+.item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.item-title { font-size: 14px; color: #303133; font-weight: 500; }
+.item-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #909399;
+}
+.empty-state {
+  text-align: center;
+  padding: 32px 0;
+  color: #c0c4cc;
+  font-size: 14px;
+}
 
-  .list-row {
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .clickable-table {
-      :deep(.el-table__row) {
-        cursor: pointer;
-        &:hover {
-          background-color: #ecf5ff;
-        }
-      }
-    }
+/* 底部版权 */
+.footer-copyright {
+  text-align: center;
+  padding: 20px 0 24px;
+  font-size: 12px;
+  color: #999;
+  
+  .divider {
+    margin: 0 8px;
+    color: #ccc;
   }
+}
+
+@media (max-width: 768px) {
+  .chart-grid, .list-grid { grid-template-columns: 1fr; }
+  .system-banner .system-title h1 { font-size: 18px; }
 }
 </style>

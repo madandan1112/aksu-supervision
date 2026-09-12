@@ -149,6 +149,6 @@ searchEnterprise('')
 <style lang="scss" scoped>
 .page-header { margin-bottom: 16px; }
 .detail-section { margin-bottom: 20px;
-  .section-title { font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 16px; padding-left: 10px; border-left: 3px solid #1A73E8; }
+  .section-title { font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 16px; padding-left: 10px; border-left: 3px solid #C8102E; }
 }
 </style>

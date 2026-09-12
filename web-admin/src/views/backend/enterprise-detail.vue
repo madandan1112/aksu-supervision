@@ -56,7 +56,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { getEnterpriseDetailById } from '@/api/system'
 
 const route = useRoute()
@@ -73,7 +72,7 @@ onMounted(async () => {
     const res = await getEnterpriseDetailById(id)
     enterpriseDetail.value = res.data
   } catch {
-    ElMessage.error('加载企业信息失败')
+    // 错误提示由 request 拦截器统一弹出（401 会跳登录），此处仅返回列表
     goBack()
   }
 })
