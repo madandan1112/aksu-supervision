@@ -59,6 +59,10 @@ public class OrgStructure {
     @Column(name = "org_type", length = 50)
     private String orgType;
 
+    /** 县级行政区划细分：CITY-县级市, COUNTY-县（仅level=2有效） */
+    @Column(name = "region_sub_type", length = 20)
+    private String regionSubType;
+
     /** 统一社会信用代码 */
     @Column(name = "unified_social_credit_code", length = 18)
     private String unifiedSocialCreditCode;

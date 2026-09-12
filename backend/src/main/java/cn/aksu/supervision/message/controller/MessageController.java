@@ -57,4 +57,11 @@ public class MessageController {
         messageService.updateSettings(userId, settings);
         return Result.success();
     }
+
+    @Operation(summary = "获取消息设置")
+    @GetMapping("/settings")
+    public Result<String> getSettings(@RequestHeader("Authorization") String auth) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(auth.replace("Bearer ", ""));
+        return Result.success(messageService.getSettings(userId));
+    }
 }

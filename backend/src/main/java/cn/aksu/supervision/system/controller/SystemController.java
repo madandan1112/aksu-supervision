@@ -1,20 +1,18 @@
 package cn.aksu.supervision.system.controller;
 
+import cn.aksu.supervision.common.BusinessException;
 import cn.aksu.supervision.common.PageResult;
 import cn.aksu.supervision.common.Result;
 import cn.aksu.supervision.enterprise.dto.EnterpriseDTO;
 import cn.aksu.supervision.enterprise.entity.EnterpriseContact;
 import cn.aksu.supervision.enterprise.service.EnterpriseService;
 import cn.aksu.supervision.enterprise.repository.EnterpriseContactRepository;
-import cn.aksu.supervision.system.dto.PermissionRequest;
-import cn.aksu.supervision.system.dto.RoleRequest;
-import cn.aksu.supervision.system.dto.UserUpdateRequest;
-import cn.aksu.supervision.system.dto.OrgRequest;
-import cn.aksu.supervision.system.dto.PositionRequest;
-import cn.aksu.supervision.system.dto.JobTitleRequest;
-import cn.aksu.supervision.system.dto.OrgUserPositionRequest;
+import cn.aksu.supervision.system.dto.*;
 import cn.aksu.supervision.system.entity.*;
+import cn.aksu.supervision.system.repository.OrgStructureRepository;
 import cn.aksu.supervision.system.service.SystemService;
+import cn.aksu.supervision.system.service.DataPermissionService;
+import cn.aksu.supervision.system.dto.DataPermissionContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,8 +31,10 @@ import java.util.Map;
 public class SystemController {
 
     private final SystemService systemService;
+    private final OrgStructureRepository orgStructureRepository;
     private final EnterpriseService enterpriseService;
     private final EnterpriseContactRepository enterpriseContactRepository;
+    private final DataPermissionService dataPermissionService;
 
     // ========== 角色 ==========
 
@@ -102,6 +102,12 @@ public class SystemController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         return Result.success(systemService.listUsers(page, size));
+    }
+
+    @Operation(summary = "用户详情")
+    @GetMapping("/user/{id}")
+    public Result<SysUser> getUser(@PathVariable Long id) {
+        return Result.success(systemService.getUser(id));
     }
 
     @Operation(summary = "更新用户")
@@ -174,21 +180,26 @@ public class SystemController {
 
     @Operation(summary = "小程序用户列表")
     @GetMapping("/miniapp-user/list")
-    public Result<PageResult<SysUser>> listMiniappUsers(
+    public Result<Map<String, Object>> listMiniappUsers(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String area,
+            @RequestParam(required = false) String industry,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) Long roleId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return Result.success(systemService.listMiniappUsers(keyword, page, size));
+        return Result.success(systemService.listMiniappUsersWithEnterprise(keyword, area, industry, status, roleId, page, size));
     }
 
     @Operation(summary = "创建小程序用户")
     @PostMapping("/miniapp-user")
-    public Result<SysUser> createMiniappUser(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String password = request.get("password");
-        String realName = request.get("realName");
-        String phone = request.get("phone");
-        String userType = request.getOrDefault("userType", "enterprise_user");
+    public Result<SysUser> createMiniappUser(@RequestBody Map<String, Object> request) {
+        String username = (String) request.get("username");
+        String password = (String) request.get("password");
+        String realName = (String) request.get("realName");
+        String phone = (String) request.get("phone");
+        String userType = (String) request.getOrDefault("userType", "enterprise_user");
+        Long roleId = request.get("roleId") != null ? ((Number) request.get("roleId")).longValue() : null;
 
         if (username == null || username.isBlank()) {
             return Result.error(400, "用户名不能为空");
@@ -197,7 +208,7 @@ public class SystemController {
             return Result.error(400, "密码不能为空");
         }
 
-        return Result.success(systemService.createMiniappUser(username, password, realName, phone, userType));
+        return Result.success(systemService.createMiniappUser(username, password, realName, phone, userType, roleId));
     }
 
     @Operation(summary = "小程序用户统计")
@@ -317,6 +328,12 @@ public class SystemController {
         return Result.success(systemService.getPositionsByCategory(category));
     }
 
+    @Operation(summary = "获取所有岗位列表（不分页，供下拉选择）")
+    @GetMapping("/position/all")
+    public Result<List<SysPosition>> listAllPositions() {
+        return Result.success(systemService.listAllPositions());
+    }
+
     // ========== 职务管理 ==========
 
     @Operation(summary = "职务分页列表")
@@ -352,6 +369,12 @@ public class SystemController {
         return Result.success(systemService.getLeadershipJobTitles());
     }
 
+    @Operation(summary = "获取所有职务列表（不分页，供下拉选择）")
+    @GetMapping("/job-title/all")
+    public Result<List<SysJobTitle>> listAllJobTitles() {
+        return Result.success(systemService.listAllJobTitles());
+    }
+
     // ========== 用户岗位职务分配 ==========
 
     @Operation(summary = "分配用户岗位职务")
@@ -381,8 +404,9 @@ public class SystemController {
 
     @Operation(summary = "设为主职")
     @PutMapping("/user-position/{id}/primary")
-    public Result<OrgUserPosition> setPrimaryPosition(@PathVariable Long id) {
-        return Result.success(systemService.setPrimaryPosition(id));
+    public Result<Void> setPrimaryPosition(@PathVariable Long id) {
+        systemService.setPrimaryPosition(id);
+        return Result.success();
     }
 
     // ========== 事件驱动API ==========
@@ -425,5 +449,112 @@ public class SystemController {
         Long newJobTitleId = ((Number) request.get("newJobTitleId")).longValue();
         systemService.promoteUser(userId, newJobTitleId);
         return Result.success();
+    }
+
+    // ========== 企业行业分类 ==========
+
+    @Operation(summary = "企业行业分类分页列表")
+    @GetMapping("/enterprise-type/list")
+    public Result<PageResult<EnterpriseType>> listEnterpriseTypes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category) {
+        return Result.success(systemService.listEnterpriseTypes(page, size, keyword, category));
+    }
+
+    @Operation(summary = "创建企业行业分类")
+    @PostMapping("/enterprise-type")
+    public Result<EnterpriseType> createEnterpriseType(@RequestBody EnterpriseType request) {
+        return Result.success(systemService.createEnterpriseType(request));
+    }
+
+    @Operation(summary = "更新企业行业分类")
+    @PutMapping("/enterprise-type/{id}")
+    public Result<EnterpriseType> updateEnterpriseType(@PathVariable Long id, @RequestBody EnterpriseType request) {
+        return Result.success(systemService.updateEnterpriseType(id, request));
+    }
+
+    @Operation(summary = "删除企业行业分类")
+    @DeleteMapping("/enterprise-type/{id}")
+    public Result<Void> deleteEnterpriseType(@PathVariable Long id) {
+        systemService.deleteEnterpriseType(id);
+        return Result.success();
+    }
+
+    @Operation(summary = "获取启用的行业分类列表（不分页）")
+    @GetMapping("/enterprise-type/active")
+    public Result<List<EnterpriseType>> getActiveEnterpriseTypes() {
+        return Result.success(systemService.getActiveEnterpriseTypes());
+    }
+
+    // ========== 角色权限详情管理 ==========
+
+    @Operation(summary = "获取角色权限列表")
+    @GetMapping("/role/{roleId}/permissions")
+    public Result<List<RolePermissionDetail>> getRolePermissions(@PathVariable Long roleId) {
+        return Result.success(systemService.getRolePermissions(roleId));
+    }
+
+    @Operation(summary = "更新角色权限")
+    @PutMapping("/role/{roleId}/permissions")
+    public Result<Void> updateRolePermissions(@PathVariable Long roleId,
+                                               @RequestBody List<String> permissionCodes) {
+        systemService.updateRolePermissions(roleId, permissionCodes);
+        return Result.success();
+    }
+
+    @Operation(summary = "获取所有角色（含数据权限信息）")
+    @GetMapping("/role/all")
+    public Result<List<SysRole>> listAllRolesWithDataPermission() {
+        return Result.success(systemService.listAllRolesWithDataPermission());
+    }
+
+    // ========== 用户权限分配 ==========
+
+    @Operation(summary = "分配用户角色")
+    @PutMapping("/user/{id}/role")
+    public Result<SysUser> assignUserRole(@PathVariable Long id, @RequestParam Long roleId) {
+        return Result.success(systemService.assignUserRole(id, roleId));
+    }
+
+    @Operation(summary = "分配用户数据权限范围")
+    @PostMapping("/user/{id}/data-scope")
+    public Result<Void> assignUserDataScope(@PathVariable Long id,
+                                             @RequestBody List<Map<String, Object>> scopes) {
+        systemService.assignUserDataScope(id, scopes);
+        return Result.success();
+    }
+
+    @Operation(summary = "获取用户数据权限范围")
+    @GetMapping("/user/{id}/data-scope")
+    public Result<List<UserDataScope>> getUserDataScopes(@PathVariable Long id) {
+        return Result.success(systemService.getUserDataScopes(id));
+    }
+
+    @Operation(summary = "检查用户是否有某权限")
+    @GetMapping("/user/{id}/has-permission")
+    public Result<Map<String, Object>> checkPermission(@PathVariable Long id,
+                                                        @RequestParam String permissionCode) {
+        boolean has = systemService.hasPermission(id, permissionCode);
+        return Result.success(Map.of("hasPermission", has, "permissionCode", permissionCode));
+    }
+
+    @Operation(summary = "获取用户权限列表")
+    @GetMapping("/user/{id}/permissions")
+    public Result<List<String>> getUserPermissions(@PathVariable Long id) {
+        return Result.success(systemService.getUserPermissions(id));
+    }
+
+    @Operation(summary = "获取用户数据权限上下文")
+    @GetMapping("/user/{id}/data-permission-context")
+    public Result<DataPermissionContext> getUserDataPermissionContext(@PathVariable Long id) {
+        return Result.success(systemService.getUserDataPermission(id));
+    }
+
+    @Operation(summary = "获取用户可访问的区域列表")
+    @GetMapping("/user/{id}/accessible-areas")
+    public Result<List<String>> getAccessibleAreas(@PathVariable Long id) {
+        return Result.success(dataPermissionService.getAccessibleAreas(id));
     }
 }

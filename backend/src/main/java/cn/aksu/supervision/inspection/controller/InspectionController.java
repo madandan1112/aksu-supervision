@@ -42,7 +42,7 @@ public class InspectionController {
     }
 
     @Operation(summary = "检查详情")
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public Result<InspectionRecord> getRecordDetail(@PathVariable Long id) {
         return Result.success(inspectionService.getRecordDetail(id));
     }

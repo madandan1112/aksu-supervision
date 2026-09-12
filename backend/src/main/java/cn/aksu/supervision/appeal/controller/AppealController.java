@@ -49,7 +49,7 @@ public class AppealController {
     }
 
     @Operation(summary = "诉求详情")
-    @GetMapping("/appeal/{id}")
+    @GetMapping("/appeal/{id:\\d+}")
     public Result<Appeal> getAppealDetail(@PathVariable Long id) {
         return Result.success(appealService.getAppealDetail(id));
     }

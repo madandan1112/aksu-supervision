@@ -25,7 +25,15 @@ public class EnterpriseDTO {
     private String businessScope;
     private String licenseUrl;
     private Integer status;
+    private String statusText;
+    private String statusDetail;
     private Long userId;
+    private String registrationStatus;
+    private String qualificationUrls;
+    private String industryTypeCode;
+    private String storefrontPhoto;
+    private String interiorPhoto;
+    private String reviewComment;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

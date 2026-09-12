@@ -5,6 +5,7 @@ import cn.aksu.supervision.common.Result;
 import cn.aksu.supervision.enterprise.dto.ContactRequest;
 import cn.aksu.supervision.enterprise.dto.EnterpriseDTO;
 import cn.aksu.supervision.enterprise.dto.EnterpriseUpdateRequest;
+import cn.aksu.supervision.enterprise.dto.RegulatoryInfoDTO;
 import cn.aksu.supervision.enterprise.entity.EnterpriseContact;
 import cn.aksu.supervision.enterprise.service.EnterpriseService;
 import cn.aksu.supervision.security.JwtTokenProvider;
@@ -32,6 +33,12 @@ public class EnterpriseController {
     public Result<EnterpriseDTO> getProfile(@RequestHeader("Authorization") String auth) {
         Long userId = getUserIdFromToken(auth);
         return Result.success(enterpriseService.getEnterpriseByUserId(userId));
+    }
+
+    @Operation(summary = "获取企业信息")
+    @GetMapping("/enterprise/{id:\\d+}")
+    public Result<EnterpriseDTO> getEnterpriseById(@PathVariable Long id) {
+        return Result.success(enterpriseService.getEnterpriseById(id));
     }
 
     @Operation(summary = "更新企业信息")
@@ -66,16 +73,18 @@ public class EnterpriseController {
         return Result.success(enterpriseService.getContacts(userId));
     }
 
-    @Operation(summary = "管理端-企业列表")
+    @Operation(summary = "管理端-企业列表（数据权限过滤）")
     @GetMapping("/admin/enterprise/list")
     public Result<PageResult<EnterpriseDTO>> listEnterprises(
+            @RequestHeader("Authorization") String auth,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String industry,
             @RequestParam(required = false) String area,
             @RequestParam(required = false) Integer status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return Result.success(enterpriseService.listEnterprises(keyword, industry, area, status, page, size));
+        Long userId = getUserIdFromToken(auth);
+        return Result.success(enterpriseService.listEnterprises(keyword, industry, area, status, page, size, userId));
     }
 
     @Operation(summary = "扫码查询企业信息")
@@ -85,7 +94,7 @@ public class EnterpriseController {
     }
 
     @Operation(summary = "管理端-企业详情")
-    @GetMapping("/admin/enterprise/{id}")
+    @GetMapping("/admin/enterprise/{id:\\d+}")
     public Result<EnterpriseDTO> getEnterpriseDetail(@PathVariable Long id) {
         return Result.success(enterpriseService.getEnterpriseById(id));
     }
@@ -96,6 +105,25 @@ public class EnterpriseController {
                                                 @RequestParam Integer status) {
         enterpriseService.updateEnterpriseStatus(id, status);
         return Result.success();
+    }
+
+    @Operation(summary = "管理端-编辑企业信息")
+    @PutMapping("/admin/enterprise/{id}")
+    public Result<EnterpriseDTO> adminUpdateEnterprise(@PathVariable Long id,
+                                                        @RequestBody EnterpriseUpdateRequest request) {
+        return Result.success(enterpriseService.adminUpdateEnterprise(id, request));
+    }
+
+    @Operation(summary = "公开-扫码查询企业监管信息")
+    @GetMapping("/public/enterprise/{creditCode}")
+    public Result<RegulatoryInfoDTO> getRegulatoryInfo(@PathVariable String creditCode) {
+        return Result.success(enterpriseService.getRegulatoryInfo(creditCode));
+    }
+
+    @Operation(summary = "管理端-获取企业监管信息")
+    @GetMapping("/admin/enterprise/{creditCode}/regulatory")
+    public Result<RegulatoryInfoDTO> adminGetRegulatoryInfo(@PathVariable String creditCode) {
+        return Result.success(enterpriseService.getRegulatoryInfo(creditCode));
     }
 
     private Long getUserIdFromToken(String auth) {

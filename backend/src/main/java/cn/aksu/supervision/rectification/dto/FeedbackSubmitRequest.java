@@ -14,4 +14,8 @@ public class FeedbackSubmitRequest {
     private String evidenceVideos;
 
     private String remark;
+
+    private String checkType;
+
+    private String attachmentUrls;
 }

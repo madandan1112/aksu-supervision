@@ -78,6 +78,12 @@ public class TaskService {
         return PageResult.of(pageData.getContent(), pageData.getTotalElements(), page, size);
     }
 
+    @Transactional(readOnly = true)
+    public InspectionTask getTask(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("任务不存在"));
+    }
+
     public InspectionTask updateTask(Long id, TaskCreateRequest request) {
         InspectionTask task = taskRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("任务不存在"));

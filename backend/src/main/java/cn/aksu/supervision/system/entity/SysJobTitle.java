@@ -52,6 +52,13 @@ public class SysJobTitle {
     @Column(length = 500)
     private String description;
 
+    /** 关联角色ID */
+    @Column(name = "role_id")
+    private Long roleId;
+
+    @Transient
+    private String roleName;
+
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)
     private LocalDateTime createTime;

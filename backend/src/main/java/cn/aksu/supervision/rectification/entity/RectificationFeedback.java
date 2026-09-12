@@ -39,6 +39,12 @@ public class RectificationFeedback {
     @Column(columnDefinition = "TEXT")
     private String remark;
 
+    @Column(name = "check_type", length = 50)
+    private String checkType;
+
+    @Column(name = "attachment_urls", length = 2000)
+    private String attachmentUrls;
+
     @Column(nullable = false, length = 20)
     @Builder.Default
     private String status = "SUBMITTED";

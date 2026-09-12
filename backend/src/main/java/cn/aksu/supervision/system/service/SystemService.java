@@ -5,6 +5,10 @@ import cn.aksu.supervision.common.PageResult;
 import cn.aksu.supervision.system.dto.*;
 import cn.aksu.supervision.system.entity.*;
 import cn.aksu.supervision.system.repository.*;
+import cn.aksu.supervision.system.dto.*;
+import cn.aksu.supervision.enterprise.repository.EnterpriseRepository;
+import cn.aksu.supervision.enterprise.entity.Enterprise;
+import cn.aksu.supervision.system.service.DataPermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +38,12 @@ public class SystemService {
     private final SysPositionRepository sysPositionRepository;
     private final SysJobTitleRepository sysJobTitleRepository;
     private final OrgUserPositionRepository orgUserPositionRepository;
+    private final EnterpriseTypeRepository enterpriseTypeRepository;
+    private final EnterpriseRepository enterpriseRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DataPermissionService dataPermissionService;
+    private final RolePermissionDetailRepository rolePermissionDetailRepository;
+    private final UserDataScopeRepository userDataScopeRepository;
 
     // ========== 角色 CRUD ==========
 
@@ -51,6 +61,13 @@ public class SystemService {
                 .roleCode(request.getRoleCode())
                 .roleName(request.getRoleName())
                 .description(request.getDescription())
+                .dataScope(request.getDataScope() != null ? request.getDataScope() : "SELF")
+                .regionScope(request.getRegionScope() != null ? request.getRegionScope() : "SELF")
+                .deptScope(request.getDeptScope() != null ? request.getDeptScope() : "SELF")
+                .orgLevel(request.getOrgLevel())
+                .parentId(request.getParentId())
+                .roleType(request.getRoleType() != null ? request.getRoleType() : "BUSINESS")
+                .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
                 .status(1)
                 .build();
         return sysRoleRepository.save(role);
@@ -62,6 +79,14 @@ public class SystemService {
         role.setRoleCode(request.getRoleCode());
         role.setRoleName(request.getRoleName());
         role.setDescription(request.getDescription());
+        if (request.getDataScope() != null) role.setDataScope(request.getDataScope());
+        if (request.getRegionScope() != null) role.setRegionScope(request.getRegionScope());
+        if (request.getDeptScope() != null) role.setDeptScope(request.getDeptScope());
+        if (request.getOrgLevel() != null) role.setOrgLevel(request.getOrgLevel());
+        if (request.getParentId() != null) role.setParentId(request.getParentId());
+        if (request.getRoleType() != null) role.setRoleType(request.getRoleType());
+        if (request.getSortOrder() != null) role.setSortOrder(request.getSortOrder());
+        if (request.getStatus() != null) role.setStatus(request.getStatus());
         return sysRoleRepository.save(role);
     }
 
@@ -131,12 +156,46 @@ public class SystemService {
         if (request.getUserType() != null) user.setUserType(request.getUserType());
         if (request.getStatus() != null) user.setStatus(request.getStatus());
         if (request.getAvatar() != null) user.setAvatar(request.getAvatar());
+        if (request.getRoleId() != null) user.setRoleId(request.getRoleId());
+
+        // 组织架构
+        if (request.getOrgId() != null) {
+            user.setOrgId(request.getOrgId());
+            // 根据orgId自动填充orgName
+            orgStructureRepository.findById(request.getOrgId())
+                    .ifPresent(org -> user.setOrgName(org.getName()));
+        }
+        if (request.getOrgName() != null) user.setOrgName(request.getOrgName());
+
+        // 岗位
+        if (request.getPositionId() != null) {
+            user.setPositionId(request.getPositionId());
+            // 根据positionId自动填充positionName
+            sysPositionRepository.findById(request.getPositionId())
+                    .ifPresent(pos -> user.setPositionName(pos.getPositionName()));
+        }
+        if (request.getPositionName() != null) user.setPositionName(request.getPositionName());
+
+        // 职务
+        if (request.getJobTitleId() != null) {
+            user.setJobTitleId(request.getJobTitleId());
+            // 根据jobTitleId自动填充jobTitleName
+            sysJobTitleRepository.findById(request.getJobTitleId())
+                    .ifPresent(jt -> user.setJobTitleName(jt.getTitleName()));
+        }
+        if (request.getJobTitleName() != null) user.setJobTitleName(request.getJobTitleName());
 
         return sysUserRepository.save(user);
     }
 
     public void deleteUser(Long id) {
         sysUserRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public SysUser getUser(Long id) {
+        return sysUserRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("用户不存在"));
     }
 
     public void resetPassword(Long id, String newPassword) {
@@ -191,30 +250,138 @@ public class SystemService {
     // ========== 小程序用户管理 ==========
 
     /**
-     * 查询小程序端用户列表（企业用户 enterprise_user）
+     * 查询小程序端用户列表（企业用户 enterprise_user），含企业关联信息
      */
     @Transactional(readOnly = true)
-    public PageResult<SysUser> listMiniappUsers(String keyword, int page, int size) {
+    public Map<String, Object> listMiniappUsersWithEnterprise(String keyword, String area, String industry, Integer status, Long roleId, int page, int size) {
+        // 如果有行业或地区筛选，优先从Enterprise表反查userId
+        if ((area != null && !area.isBlank()) || (industry != null && !industry.isBlank())) {
+            return listByEnterpriseFilter(keyword, area, industry, status, roleId, page, size);
+        }
+
         Page<SysUser> pageData;
-        if (keyword != null && !keyword.isBlank()) {
-            // 按关键词搜索（用户名、真实姓名、手机号）
-            pageData = sysUserRepository.findByUserTypeIn(
-                    List.of("enterprise_user", "enterprise"),
-                    PageRequest.of(page - 1, size)
-            );
+        List<String> userTypes = List.of("enterprise_user", "enterprise");
+
+        if (roleId != null && keyword != null && !keyword.isBlank()) {
+            pageData = sysUserRepository.findByUserTypeInAndRoleIdAndKeyword(
+                    userTypes, roleId, keyword, PageRequest.of(page - 1, size));
+        } else if (roleId != null && status != null) {
+            pageData = sysUserRepository.findByUserTypeInAndRoleIdAndStatus(
+                    userTypes, roleId, status, PageRequest.of(page - 1, size));
+        } else if (roleId != null) {
+            pageData = sysUserRepository.findByUserTypeInAndRoleId(
+                    userTypes, roleId, PageRequest.of(page - 1, size));
+        } else if (keyword != null && !keyword.isBlank()) {
+            pageData = sysUserRepository.findByUserTypeInAndKeyword(
+                    userTypes, keyword, PageRequest.of(page - 1, size));
+        } else if (status != null) {
+            pageData = sysUserRepository.findByUserTypeInAndStatus(
+                    userTypes, status, PageRequest.of(page - 1, size));
         } else {
             pageData = sysUserRepository.findByUserTypeIn(
-                    List.of("enterprise_user", "enterprise"),
-                    PageRequest.of(page - 1, size)
-            );
+                    userTypes, PageRequest.of(page - 1, size));
         }
-        return PageResult.of(pageData.getContent(), pageData.getTotalElements(), page, size);
+
+        List<Map<String, Object>> list = enrichWithEnterprise(pageData.getContent());
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", pageData.getTotalElements());
+        result.put("page", page);
+        result.put("size", size);
+        return result;
+    }
+
+    /**
+     * 通过Enterprise表筛选条件反查用户
+     */
+    private Map<String, Object> listByEnterpriseFilter(String keyword, String area, String industry, Integer status, Long roleId, int page, int size) {
+        // 查找符合条件的Enterprise的userId列表
+        List<Enterprise> enterprises = enterpriseRepository.findAll().stream()
+                .filter(e -> (area == null || area.isBlank() || area.equals(e.getArea()))
+                          && (industry == null || industry.isBlank() || industry.equals(e.getIndustry())))
+                .toList();
+
+        List<Long> userIds = enterprises.stream()
+                .map(Enterprise::getUserId)
+                .filter(uid -> uid != null)
+                .distinct()
+                .toList();
+
+        if (userIds.isEmpty()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("list", List.of());
+            result.put("total", 0L);
+            result.put("page", page);
+            result.put("size", size);
+            return result;
+        }
+
+        Page<SysUser> pageData;
+        if (roleId != null && keyword != null && !keyword.isBlank()) {
+            pageData = sysUserRepository.findByIdInAndRoleIdAndKeyword(userIds, roleId, keyword, PageRequest.of(page - 1, size));
+        } else if (roleId != null && status != null) {
+            pageData = sysUserRepository.findByIdInAndRoleIdAndStatus(userIds, roleId, status, PageRequest.of(page - 1, size));
+        } else if (roleId != null) {
+            pageData = sysUserRepository.findByIdInAndRoleId(userIds, roleId, PageRequest.of(page - 1, size));
+        } else if (keyword != null && !keyword.isBlank()) {
+            pageData = sysUserRepository.findByIdInAndKeyword(userIds, keyword, PageRequest.of(page - 1, size));
+        } else if (status != null) {
+            pageData = sysUserRepository.findByIdInAndStatus(userIds, status, PageRequest.of(page - 1, size));
+        } else {
+            pageData = sysUserRepository.findByIdIn(userIds, PageRequest.of(page - 1, size));
+        }
+
+        List<Map<String, Object>> list = enrichWithEnterprise(pageData.getContent());
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", pageData.getTotalElements());
+        result.put("page", page);
+        result.put("size", size);
+        return result;
+    }
+
+    /**
+     * 为用户列表附加企业关联信息
+     */
+    private List<Map<String, Object>> enrichWithEnterprise(List<SysUser> users) {
+        // 批量查询关联的Enterprise
+        List<Long> userIds = users.stream().map(SysUser::getId).toList();
+        Map<Long, Enterprise> enterpriseMap = new HashMap<>();
+        for (Long uid : userIds) {
+            enterpriseRepository.findByUserId(uid).ifPresent(e -> enterpriseMap.put(uid, e));
+        }
+
+        return users.stream().map(user -> {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", user.getId());
+            item.put("username", user.getUsername());
+            item.put("realName", user.getRealName());
+            item.put("phone", user.getPhone());
+            item.put("userType", user.getUserType());
+            item.put("status", user.getStatus());
+            item.put("createTime", user.getCreateTime());
+            item.put("roleId", user.getRoleId());
+
+            Enterprise ent = enterpriseMap.get(user.getId());
+            if (ent != null) {
+                item.put("enterpriseId", ent.getId());
+                item.put("enterpriseName", ent.getName());
+                item.put("area", ent.getArea());
+                item.put("industry", ent.getIndustry());
+            } else {
+                item.put("enterpriseId", null);
+                item.put("enterpriseName", null);
+                item.put("area", null);
+                item.put("industry", null);
+            }
+            return item;
+        }).toList();
     }
 
     /**
      * 创建小程序用户
      */
-    public SysUser createMiniappUser(String username, String password, String realName, String phone, String userType) {
+    public SysUser createMiniappUser(String username, String password, String realName, String phone, String userType, Long roleId) {
         if (sysUserRepository.existsByUsername(username)) {
             throw new BusinessException("用户名已存在");
         }
@@ -227,6 +394,7 @@ public class SystemService {
                 .realName(realName)
                 .phone(phone)
                 .userType(userType != null ? userType : "enterprise_user")
+                .roleId(roleId)
                 .status(1)
                 .build();
         return sysUserRepository.save(user);
@@ -410,8 +578,8 @@ public class SystemService {
         if (request.getParentId() != null) {
             OrgStructure parent = orgStructureRepository.findById(request.getParentId())
                     .orElseThrow(() -> new BusinessException("父级组织不存在"));
-            if (parent.getLevel() != request.getLevel() - 1) {
-                throw new BusinessException("层级关系不正确：父级层级应为" + (request.getLevel() - 1));
+            if (parent.getLevel() >= request.getLevel()) {
+                throw new BusinessException("层级关系不正确：父级层级必须小于当前层级");
             }
         } else {
             if (request.getLevel() != 1) {
@@ -473,8 +641,8 @@ public class SystemService {
             // 校验新父级
             OrgStructure newParent = orgStructureRepository.findById(request.getParentId())
                     .orElseThrow(() -> new BusinessException("新父级组织不存在"));
-            if (newParent.getLevel() != existing.getLevel() - 1) {
-                throw new BusinessException("层级关系不正确：父级层级应为" + (existing.getLevel() - 1));
+            if (newParent.getLevel() >= existing.getLevel()) {
+                throw new BusinessException("层级关系不正确：父级层级必须小于当前层级");
             }
             // 检查是否将自己设为自己的父级或后代
             if (request.getParentId().equals(id)) {
@@ -499,6 +667,15 @@ public class SystemService {
     @Transactional(readOnly = true)
     public PageResult<SysPosition> listPositions(int page, int size) {
         Page<SysPosition> pageData = sysPositionRepository.findAll(PageRequest.of(page - 1, size));
+        // 填充角色名称
+        for (SysPosition pos : pageData.getContent()) {
+            if (pos.getRoleId() != null) {
+                sysRoleRepository.findById(pos.getRoleId()).ifPresent(role -> pos.setRoleName(role.getRoleName()));
+            }
+            if (pos.getOrgId() != null) {
+                orgStructureRepository.findById(pos.getOrgId()).ifPresent(org -> pos.setOrgName(org.getName()));
+            }
+        }
         return PageResult.of(pageData.getContent(), pageData.getTotalElements(), page, size);
     }
 
@@ -516,6 +693,7 @@ public class SystemService {
                 .level(request.getLevel() != null ? request.getLevel() : 1)
                 .status(request.getStatus() != null ? request.getStatus() : 1)
                 .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
+                .roleId(request.getRoleId())
                 .description(request.getDescription())
                 .build();
         return sysPositionRepository.save(position);
@@ -539,6 +717,7 @@ public class SystemService {
         if (request.getLevel() != null) position.setLevel(request.getLevel());
         if (request.getStatus() != null) position.setStatus(request.getStatus());
         if (request.getSortOrder() != null) position.setSortOrder(request.getSortOrder());
+        if (request.getRoleId() != null) position.setRoleId(request.getRoleId());
         if (request.getDescription() != null) position.setDescription(request.getDescription());
         return sysPositionRepository.save(position);
     }
@@ -552,6 +731,12 @@ public class SystemService {
     @Transactional(readOnly = true)
     public PageResult<SysJobTitle> listJobTitles(int page, int size) {
         Page<SysJobTitle> pageData = sysJobTitleRepository.findAll(PageRequest.of(page - 1, size));
+        // 填充角色名称
+        for (SysJobTitle jt : pageData.getContent()) {
+            if (jt.getRoleId() != null) {
+                sysRoleRepository.findById(jt.getRoleId()).ifPresent(role -> jt.setRoleName(role.getRoleName()));
+            }
+        }
         return PageResult.of(pageData.getContent(), pageData.getTotalElements(), page, size);
     }
 
@@ -567,6 +752,7 @@ public class SystemService {
                 .level(request.getLevel() != null ? request.getLevel() : 1)
                 .status(request.getStatus() != null ? request.getStatus() : 1)
                 .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
+                .roleId(request.getRoleId())
                 .description(request.getDescription())
                 .build();
         return sysJobTitleRepository.save(jobTitle);
@@ -588,6 +774,7 @@ public class SystemService {
         if (request.getLevel() != null) jobTitle.setLevel(request.getLevel());
         if (request.getStatus() != null) jobTitle.setStatus(request.getStatus());
         if (request.getSortOrder() != null) jobTitle.setSortOrder(request.getSortOrder());
+        if (request.getRoleId() != null) jobTitle.setRoleId(request.getRoleId());
         if (request.getDescription() != null) jobTitle.setDescription(request.getDescription());
         return sysJobTitleRepository.save(jobTitle);
     }
@@ -777,5 +964,287 @@ public class SystemService {
 
         primary.setJobTitleId(newJobTitleId);
         orgUserPositionRepository.save(primary);
+    }
+
+    // ========== 补充方法（Controller需要） ==========
+
+    /**
+     * 按类别查询岗位
+     */
+    @Transactional(readOnly = true)
+    public List<SysPosition> getPositionsByCategory(String category) {
+        return sysPositionRepository.findByCategoryAndStatusOrderBySortOrder(category, 1);
+    }
+
+    /**
+     * 获取所有岗位列表（不分页，供下拉选择）
+     */
+    @Transactional(readOnly = true)
+    public List<SysPosition> listAllPositions() {
+        List<SysPosition> list = sysPositionRepository.findByStatusOrderBySortOrder(1);
+        for (SysPosition pos : list) {
+            if (pos.getRoleId() != null) {
+                sysRoleRepository.findById(pos.getRoleId()).ifPresent(role -> pos.setRoleName(role.getRoleName()));
+            }
+            if (pos.getOrgId() != null) {
+                orgStructureRepository.findById(pos.getOrgId()).ifPresent(org -> pos.setOrgName(org.getName()));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 查询领导职务
+     */
+    @Transactional(readOnly = true)
+    public List<SysJobTitle> getLeadershipJobTitles() {
+        return sysJobTitleRepository.findByIsLeadershipAndStatusOrderByLevel(1, 1);
+    }
+
+    /**
+     * 获取所有职务列表（不分页，供下拉选择）
+     */
+    @Transactional(readOnly = true)
+    public List<SysJobTitle> listAllJobTitles() {
+        List<SysJobTitle> list = sysJobTitleRepository.findByStatusOrderBySortOrder(1);
+        for (SysJobTitle jt : list) {
+            if (jt.getRoleId() != null) {
+                sysRoleRepository.findById(jt.getRoleId()).ifPresent(role -> jt.setRoleName(role.getRoleName()));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 查询用户的岗位职务分配（Controller别名）
+     */
+    @Transactional(readOnly = true)
+    public List<OrgUserPosition> getUserPositions(Long userId) {
+        return listUserPositions(userId);
+    }
+
+    /**
+     * 查询组织的用户分配（Controller别名）
+     */
+    @Transactional(readOnly = true)
+    public List<OrgUserPosition> getOrgUserPositions(Long orgId) {
+        return listOrgUsers(orgId);
+    }
+
+    /**
+     * 设为主职
+     */
+    public void setPrimaryPosition(Long id) {
+        OrgUserPosition target = orgUserPositionRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("分配记录不存在"));
+        Long userId = target.getUserId();
+        // 将该用户所有分配设为非主职
+        List<OrgUserPosition> all = orgUserPositionRepository.findByUserId(userId);
+        for (OrgUserPosition item : all) {
+            item.setIsPrimary(item.getId().equals(id) ? 1 : 0);
+            orgUserPositionRepository.save(item);
+        }
+    }
+
+    /**
+     * 用户入职（Controller别名）
+     */
+    public void onboardUser(Long userId, Long orgId, Long positionId, Long jobTitleId) {
+        handleUserOnboard(userId, orgId, positionId, jobTitleId);
+    }
+
+    /**
+     * 用户调动（Controller别名）
+     */
+    public void transferUser(Long userId, Long newOrgId, Long newPositionId) {
+        handleUserTransfer(userId, newOrgId, newPositionId);
+    }
+
+    /**
+     * 用户离职（Controller别名）
+     */
+    public void resignUser(Long userId) {
+        handleUserResign(userId);
+    }
+
+    /**
+     * 用户升降级（Controller别名）
+     */
+    public void promoteUser(Long userId, Long newJobTitleId) {
+        handleUserPromote(userId, newJobTitleId);
+    }
+
+    // ========== 企业行业分类 CRUD ==========
+
+    @Transactional(readOnly = true)
+    public PageResult<EnterpriseType> listEnterpriseTypes(int page, int size, String keyword, String category) {
+        Page<EnterpriseType> pageData = enterpriseTypeRepository.search(keyword, category, PageRequest.of(page, size));
+        return PageResult.of(pageData.getContent(), pageData.getTotalElements(), page + 1, size);
+    }
+
+    public EnterpriseType createEnterpriseType(EnterpriseType request) {
+        if (enterpriseTypeRepository.existsByTypeCode(request.getTypeCode())) {
+            throw new BusinessException("分类编码已存在: " + request.getTypeCode());
+        }
+        return enterpriseTypeRepository.save(request);
+    }
+
+    public EnterpriseType updateEnterpriseType(Long id, EnterpriseType request) {
+        EnterpriseType existing = enterpriseTypeRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("行业分类不存在"));
+        if (!existing.getTypeCode().equals(request.getTypeCode()) &&
+                enterpriseTypeRepository.existsByTypeCode(request.getTypeCode())) {
+            throw new BusinessException("分类编码已存在: " + request.getTypeCode());
+        }
+        existing.setTypeCode(request.getTypeCode());
+        existing.setTypeName(request.getTypeName());
+        existing.setCategory(request.getCategory());
+        existing.setRequiredLicense(request.getRequiredLicense());
+        existing.setDescription(request.getDescription());
+        existing.setStatus(request.getStatus());
+        existing.setSortOrder(request.getSortOrder());
+        return enterpriseTypeRepository.save(existing);
+    }
+
+    public void deleteEnterpriseType(Long id) {
+        if (!enterpriseTypeRepository.existsById(id)) {
+            throw new BusinessException("行业分类不存在");
+        }
+        enterpriseTypeRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnterpriseType> getActiveEnterpriseTypes() {
+        return enterpriseTypeRepository.findByStatusOrderBySortOrder(1);
+    }
+
+    // ========== 角色权限详情管理 ==========
+
+    @Transactional(readOnly = true)
+    public List<RolePermissionDetail> getRolePermissions(Long roleId) {
+        return rolePermissionDetailRepository.findByRoleIdAndStatus(roleId, 1);
+    }
+
+    @Transactional
+    public void updateRolePermissions(Long roleId, List<String> permissionCodes) {
+        // Delete existing
+        rolePermissionDetailRepository.deleteByRoleId(roleId);
+        // Insert new
+        for (String code : permissionCodes) {
+            String[] parts = code.split(":");
+            String module = parts.length > 0 ? parts[0] : "unknown";
+            RolePermissionDetail rpd = RolePermissionDetail.builder()
+                    .roleId(roleId)
+                    .permissionCode(code)
+                    .permissionName(code)
+                    .module(module)
+                    .status(1)
+                    .build();
+            rolePermissionDetailRepository.save(rpd);
+        }
+    }
+
+    // ========== 用户权限分配 ==========
+
+    /**
+     * Assign role to user
+     */
+    @Transactional
+    public SysUser assignUserRole(Long userId, Long roleId) {
+        SysUser user = sysUserRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("用户不存在"));
+        SysRole role = sysRoleRepository.findById(roleId)
+                .orElseThrow(() -> new BusinessException("角色不存在"));
+        user.setRoleId(roleId);
+        return sysUserRepository.save(user);
+    }
+
+    /**
+     * Assign data scope to user
+     */
+    @Transactional
+    public void assignUserDataScope(Long userId, List<Map<String, Object>> scopes) {
+        userDataScopeRepository.deleteByUserId(userId);
+        for (Map<String, Object> scope : scopes) {
+            String orgType = (String) scope.get("orgType");
+            Long orgId = ((Number) scope.get("orgId")).longValue();
+            String dataScope = (String) scope.getOrDefault("dataScope", "VIEW");
+
+            UserDataScope uds = UserDataScope.builder()
+                    .userId(userId)
+                    .orgId(orgId)
+                    .orgType(orgType)
+                    .dataScope(dataScope)
+                    .build();
+            userDataScopeRepository.save(uds);
+        }
+    }
+
+    /**
+     * Get user's data scope list
+     */
+    @Transactional(readOnly = true)
+    public List<UserDataScope> getUserDataScopes(Long userId) {
+        return userDataScopeRepository.findByUserId(userId);
+    }
+
+    /**
+     * Check if user has specific permission
+     */
+    @Transactional(readOnly = true)
+    public boolean hasPermission(Long userId, String permissionCode) {
+        SysUser user = sysUserRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("用户不存在"));
+
+        // Admin has all permissions
+        if ("admin".equals(user.getUserType()) || (user.getRoleId() != null && user.getRoleId() == 1L)) {
+            return true;
+        }
+
+        if (user.getRoleId() == null) return false;
+
+        return rolePermissionDetailRepository.existsByRoleIdAndPermissionCode(user.getRoleId(), permissionCode);
+    }
+
+    /**
+     * Get user's permission list
+     */
+    @Transactional(readOnly = true)
+    public List<String> getUserPermissions(Long userId) {
+        SysUser user = sysUserRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("用户不存在"));
+
+        // Admin has all permissions
+        if ("admin".equals(user.getUserType()) || (user.getRoleId() != null && user.getRoleId() == 1L)) {
+            return List.of("enterprise:create", "enterprise:update", "enterprise:delete", "enterprise:view",
+                    "inspection:create", "inspection:update", "inspection:delete", "inspection:view",
+                    "rectification:create", "rectification:update", "rectification:delete", "rectification:view",
+                    "report:create", "report:update", "report:delete", "report:view",
+                    "user:create", "user:update", "user:delete", "user:view",
+                    "system:config", "appeal:create", "appeal:view");
+        }
+
+        if (user.getRoleId() == null) return List.of();
+
+        return rolePermissionDetailRepository.findByRoleIdAndStatus(user.getRoleId(), 1)
+                .stream()
+                .map(RolePermissionDetail::getPermissionCode)
+                .toList();
+    }
+
+    /**
+     * Get user's data permission context
+     */
+    @Transactional(readOnly = true)
+    public DataPermissionContext getUserDataPermission(Long userId) {
+        return dataPermissionService.getDataPermission(userId);
+    }
+
+    /**
+     * Get all roles with data permission info
+     */
+    @Transactional(readOnly = true)
+    public List<SysRole> listAllRolesWithDataPermission() {
+        return sysRoleRepository.findAll();
     }
 }

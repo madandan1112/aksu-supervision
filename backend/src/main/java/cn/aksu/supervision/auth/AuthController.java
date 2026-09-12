@@ -32,11 +32,11 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CaptchaService captchaService;
+    private final cn.aksu.supervision.enterprise.service.EnterpriseService enterpriseService;
 
     @Operation(summary = "用户名密码登录")
     @PostMapping("/login")
     public Result<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
-        // 校验图形验证码
         if (!captchaService.validateCaptcha(request.getCaptchaKey(), request.getCaptchaCode())) {
             throw new BusinessException(400, "验证码错误或已过期");
         }
@@ -143,6 +143,19 @@ public class AuthController {
         userInfo.put("userType", user.getUserType() != null ? user.getUserType() : "");
         userInfo.put("phone", user.getPhone() != null ? user.getPhone() : "");
         userInfo.put("email", user.getEmail() != null ? user.getEmail() : "");
+        userInfo.put("orgName", user.getOrgName() != null ? user.getOrgName() : "");
+
+        // 企业用户附带所属企业名（首页头部展示）；执法用户附带属地
+        if ("enterprise".equals(user.getUserType()) || "enterprise_user".equals(user.getUserType())) {
+            try {
+                cn.aksu.supervision.enterprise.dto.EnterpriseDTO ent =
+                        enterpriseService.getEnterpriseByUserId(user.getId());
+                userInfo.put("enterpriseName", ent != null ? ent.getName() : "");
+                userInfo.put("enterpriseId", ent != null ? ent.getId() : null);
+            } catch (Exception e) {
+                userInfo.put("enterpriseName", "");
+            }
+        }
 
         return Result.success(userInfo);
     }

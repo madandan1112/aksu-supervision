@@ -21,6 +21,10 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_type", nullable = false, length = 20)
+    @Builder.Default
+    private String userType = "enterprise";
+
     @Column(nullable = false)
     private Long userId;
 
@@ -42,6 +46,9 @@ public class Message {
 
     @Column
     private Long relatedId;
+
+    @Column(name = "related_type", length = 30)
+    private String relatedType;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

@@ -30,6 +30,14 @@ public class CaptchaService {
     private static final long EXPIRE_MINUTES = 5;
     private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+    /**
+     * 是否在日志中打印验证码明文。
+     * 开发/联调环境开启（供自动化连通性测试从日志取码）；
+     * 生产环境必须配置 captcha.log-code-enabled: false，只记key不记码。
+     */
+    @org.springframework.beans.factory.annotation.Value("${captcha.log-code-enabled:true}")
+    private boolean logCodeEnabled;
+
     private final ConcurrentHashMap<String, CaptchaItem> captchaCache = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -48,7 +56,11 @@ public class CaptchaService {
         String base64Image = generateImage(code);
 
         captchaCache.put(key, new CaptchaItem(code, System.currentTimeMillis() + EXPIRE_MINUTES * 60 * 1000));
-        log.debug("生成验证码: key={}, code={}", key, code);
+        if (logCodeEnabled) {
+            log.info("生成验证码: key={}, code={}", key, code);
+        } else {
+            log.info("生成验证码: key={}", key);
+        }
 
         return new CaptchaResult(key, "data:image/png;base64," + base64Image);
     }

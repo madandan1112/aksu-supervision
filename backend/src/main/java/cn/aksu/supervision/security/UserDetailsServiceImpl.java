@@ -23,7 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         SysUser user = sysUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getUserType());
+        // 角色统一大写（ADMIN / INSPECTOR / ENTERPRISE / ENTERPRISE_USER），与 SecurityConfig 规则匹配
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
+                "ROLE_" + (user.getUserType() == null ? "UNKNOWN" : user.getUserType().toUpperCase()));
         return new User(user.getUsername(), user.getPassword(), Collections.singletonList(authority));
     }
 }

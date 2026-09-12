@@ -38,6 +38,12 @@ public class InspectionRecord {
     @Column(columnDefinition = "TEXT")
     private String formData;
 
+    @Column(name = "check_type", length = 500)
+    private String checkType;
+
+    @Column(name = "attachment_urls", length = 2000)
+    private String attachmentUrls;
+
     @Column(columnDefinition = "TEXT")
     private String issues;
 

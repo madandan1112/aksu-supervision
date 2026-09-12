@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class InspectionSubmitRequest {
 
-    @NotNull(message = "任务ID不能为空")
     private Long taskId;
 
     @NotNull(message = "企业ID不能为空")
@@ -16,9 +15,19 @@ public class InspectionSubmitRequest {
 
     private String issues;
 
+    private String requirements;
+
+    private String deadline;
+
+    private String checkTypes;
+
     private String evidenceImages;
 
     private String evidenceVideos;
+
+    private String attachmentUrls;
+
+    private String remark;
 
     private String summary;
 }

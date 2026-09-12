@@ -30,5 +30,8 @@ public class PositionRequest {
 
     private Integer sortOrder;
 
+    /** 关联角色ID */
+    private Long roleId;
+
     private String description;
 }

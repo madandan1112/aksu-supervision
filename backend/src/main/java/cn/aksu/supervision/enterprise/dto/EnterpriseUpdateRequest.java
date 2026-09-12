@@ -6,6 +6,7 @@ import lombok.Data;
 public class EnterpriseUpdateRequest {
 
     private String name;
+    private String creditCode;
     private String legalPerson;
     private String phone;
     private String email;
@@ -14,4 +15,7 @@ public class EnterpriseUpdateRequest {
     private String address;
     private String businessScope;
     private String licenseUrl;
+    private String storefrontPhoto;
+    private String interiorPhoto;
+    private String qualificationUrls;
 }

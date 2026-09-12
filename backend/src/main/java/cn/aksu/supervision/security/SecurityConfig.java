@@ -42,6 +42,17 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        // ===== 角色隔离（userType → ROLE_<userType>）=====
+                        // 管理端接口：仅管理员
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // 执法端接口：执法人员或管理员
+                        .requestMatchers("/api/inspector/**").hasAnyRole("INSPECTOR", "ADMIN")
+                        // 企业自助管理：企业用户或管理员
+                        .requestMatchers("/api/enterprise/profile").hasAnyRole("ENTERPRISE", "ENTERPRISE_USER", "ADMIN")
+                        .requestMatchers("/api/enterprise/profile/**").hasAnyRole("ENTERPRISE", "ENTERPRISE_USER", "ADMIN")
+                        .requestMatchers("/api/enterprise/contacts").hasAnyRole("ENTERPRISE", "ENTERPRISE_USER", "ADMIN")
+                        // 企业信息查询类（详情/扫码/联系人查看）：执法端也需要（全景档案）
+                        .requestMatchers("/api/enterprise/**").hasAnyRole("ENTERPRISE", "ENTERPRISE_USER", "INSPECTOR", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

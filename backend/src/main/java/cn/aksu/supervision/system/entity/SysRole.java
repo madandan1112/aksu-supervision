@@ -44,6 +44,24 @@ public class SysRole {
     @Builder.Default
     private String dataScope = "ALL";
 
+    /** 区域数据权限范围：ALL-全部, REGION-地区级, CITY-市级, COUNTY-县级 */
+    @Column(name = "region_scope", length = 20)
+    @Builder.Default
+    private String regionScope = "ALL";
+
+    /** 科室数据权限范围：ALL-全部, SELF-仅自己, DEPT-本科室 */
+    @Column(name = "dept_scope", length = 20)
+    @Builder.Default
+    private String deptScope = "ALL";
+
+    /** 组织层级：REGION, CITY, COUNTY, DEPT */
+    @Column(name = "org_level", length = 20)
+    private String orgLevel;
+
+    /** 关联组织ID */
+    @Column(name = "org_id")
+    private Long orgId;
+
     @Column(name = "sort_order", nullable = false)
     @Builder.Default
     private Integer sortOrder = 0;

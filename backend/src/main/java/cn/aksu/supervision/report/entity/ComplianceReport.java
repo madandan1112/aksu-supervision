@@ -63,4 +63,10 @@ public class ComplianceReport {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updateTime;
+
+    @Transient
+    private String enterpriseName;
+
+    @Transient
+    private String reportNo;
 }

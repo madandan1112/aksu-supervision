@@ -52,6 +52,12 @@ public class TaskController {
         return Result.success(taskService.updateTask(id, request));
     }
 
+    @Operation(summary = "任务详情")
+    @GetMapping("/admin/task/{id}")
+    public Result<InspectionTask> getTask(@PathVariable Long id) {
+        return Result.success(taskService.getTask(id));
+    }
+
     @Operation(summary = "终止任务")
     @PostMapping("/admin/task/{id}/terminate")
     public Result<InspectionTask> terminateTask(@PathVariable Long id,

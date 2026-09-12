@@ -79,4 +79,17 @@ public class ComplianceReportController {
     public Result<List<ComplianceReport>> getExpiringReports() {
         return Result.success(reportService.getExpiringReports());
     }
+
+    @Operation(summary = "更新报告（重新上传）")
+    @PutMapping("/admin/report/{id}")
+    public Result<ComplianceReport> updateReport(@PathVariable Long id,
+                                                   @Valid @RequestBody ReportUploadRequest request) {
+        return Result.success(reportService.updateReport(id, request));
+    }
+
+    @Operation(summary = "报告详情")
+    @GetMapping("/admin/report/{id}")
+    public Result<ComplianceReport> getReport(@PathVariable Long id) {
+        return Result.success(reportService.getReport(id));
+    }
 }

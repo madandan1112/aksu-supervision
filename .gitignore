@@ -40,3 +40,20 @@ coverage/
 *.tmp
 *.bak
 *.swp
+sec-tools/
+
+# 构建产物（可重新生成）
+deploy/
+
+# 参考资料/第三方文档（2.2G，不属于工程代码）
+dev-docs/
+
+# 工具缓存与临时文件
+.mimosa/
+.v2c/
+.video_agent/
+_temp_list.txt
+backend/app.err
+backend/.mimosa/
+backend/src/main/resources/.mimosa/
+unpackage/
