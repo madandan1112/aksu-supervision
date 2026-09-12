@@ -55,7 +55,7 @@ defineProps({
     background-color: #e8e8e8;
 
     &--done {
-      background-color: #1a73e8;
+      background-color: #2563EB;
     }
   }
 
@@ -76,10 +76,10 @@ defineProps({
     color: #ffffff;
 
     &--done {
-      background-color: #1a73e8;
+      background-color: #2563EB;
     }
     &--current {
-      background-color: #1a73e8;
+      background-color: #2563EB;
       border: 6rpx solid rgba(26, 115, 232, 0.2);
     }
     &--wait {
@@ -106,14 +106,14 @@ defineProps({
 
   &--current {
     .step-item__title {
-      color: #1a73e8;
+      color: #2563EB;
       font-weight: 600;
     }
   }
 
   &--active {
     .step-item__title {
-      color: #1a73e8;
+      color: #2563EB;
     }
   }
 }

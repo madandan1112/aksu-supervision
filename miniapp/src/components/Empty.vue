@@ -72,7 +72,7 @@ defineEmits(['action'])
 
   &__action {
     padding: 16rpx 48rpx;
-    background-color: #1a73e8;
+    background-color: #2563EB;
     border-radius: 40rpx;
   }
 

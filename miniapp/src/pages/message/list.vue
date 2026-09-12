@@ -149,7 +149,7 @@ function goDetail(id) {
     position: relative;
 
     &--active {
-      .tabs__text { color: #1a73e8; font-weight: 600; }
+      .tabs__text { color: #2563EB; font-weight: 600; }
       &::after {
         content: '';
         position: absolute;
@@ -158,7 +158,7 @@ function goDetail(id) {
         transform: translateX(-50%);
         width: 40rpx;
         height: 6rpx;
-        background-color: #1a73e8;
+        background-color: #2563EB;
         border-radius: 3rpx;
       }
     }

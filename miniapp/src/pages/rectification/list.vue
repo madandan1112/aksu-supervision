@@ -161,7 +161,7 @@ function goDetail(id) {
     color: #666666;
 
     .filter-item--active & {
-      color: #1a73e8;
+      color: #2563EB;
       font-weight: 600;
     }
   }

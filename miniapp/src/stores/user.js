@@ -15,14 +15,14 @@ export const useUserStore = defineStore('user', () => {
   const isInspector = computed(() => userInfo.value?.userType === 'inspector')
   const isEnterprise = computed(() => userInfo.value?.userType === 'enterprise')
 
-  /** 账号密码登录 */
+  /** 账号密码登录（小程序端免验证码通道） */
   async function accountLogin(username, password) {
-    const data = await post('/auth/login', { username, password })
+    const data = await post('/auth/miniprogram-login', { username, password })
     token.value = data.token
-    // 登录后获取用户信息
+    // 必须先持久化 token，后续 /auth/userinfo 请求才能带上 Authorization
+    setToken(data.token)
     const info = await get('/auth/userinfo')
     userInfo.value = info
-    setToken(data.token)
     setUserInfo(info)
     return data
   }
@@ -35,9 +35,9 @@ export const useUserStore = defineStore('user', () => {
     }
     const data = await post('/auth/wx-login', { code: loginRes.code })
     token.value = data.token
+    setToken(data.token)
     const info = await get('/auth/userinfo')
     userInfo.value = info
-    setToken(data.token)
     setUserInfo(info)
     return data
   }

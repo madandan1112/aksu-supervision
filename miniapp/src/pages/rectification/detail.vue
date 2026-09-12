@@ -129,7 +129,7 @@ function goResult() {
 
     .status-banner--pending & { color: #ff3b30; }
     .status-banner--rectifying & { color: #ff9500; }
-    .status-banner--verifying & { color: #1a73e8; }
+    .status-banner--verifying & { color: #2563EB; }
     .status-banner--passed & { color: #34c759; }
     .status-banner--failed & { color: #ff3b30; }
   }
@@ -222,7 +222,7 @@ function goResult() {
 .btn-primary {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;

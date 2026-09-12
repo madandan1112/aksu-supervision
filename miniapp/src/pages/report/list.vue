@@ -166,7 +166,7 @@ function goUpload() {
   &__text {
     font-size: 26rpx;
     color: #666666;
-    .filter-item--active & { color: #1a73e8; font-weight: 600; }
+    .filter-item--active & { color: #2563EB; font-weight: 600; }
   }
 }
 
@@ -212,7 +212,7 @@ function goUpload() {
 
 .empty-action {
   padding: 16rpx 48rpx;
-  background-color: #1a73e8;
+  background-color: #2563EB;
   border-radius: 40rpx;
   margin-top: 20rpx;
 
@@ -237,7 +237,7 @@ function goUpload() {
   bottom: 160rpx;
   width: 104rpx;
   height: 104rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   border-radius: 52rpx;
   display: flex;
   align-items: center;

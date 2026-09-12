@@ -112,7 +112,7 @@ function previewFile(file) {
     font-size: 30rpx;
     font-weight: 600;
     .status-bar--pending & { color: #ff9500; }
-    .status-bar--reviewing & { color: #1a73e8; }
+    .status-bar--reviewing & { color: #2563EB; }
     .status-bar--approved & { color: #34c759; }
     .status-bar--rejected & { color: #ff3b30; }
   }
@@ -204,9 +204,9 @@ function previewFile(file) {
 
   &__action {
     font-size: 24rpx;
-    color: #1a73e8;
+    color: #2563EB;
     padding: 8rpx 20rpx;
-    border: 2rpx solid #1a73e8;
+    border: 2rpx solid #2563EB;
     border-radius: 20rpx;
   }
 }

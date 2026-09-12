@@ -44,7 +44,7 @@ defineProps({
   }
   &--primary {
     background-color: rgba(26, 115, 232, 0.1);
-    .status-tag__text { color: #1A73E8; }
+    .status-tag__text { color: #2563EB; }
   }
   &--success {
     background-color: rgba(52, 199, 89, 0.1);

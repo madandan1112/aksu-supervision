@@ -173,7 +173,7 @@ function goDetail(id) {
 
     &--active {
       .tabs__text {
-        color: #1a73e8;
+        color: #2563EB;
         font-weight: 600;
       }
       &::after {
@@ -184,7 +184,7 @@ function goDetail(id) {
         transform: translateX(-50%);
         width: 40rpx;
         height: 6rpx;
-        background-color: #1a73e8;
+        background-color: #2563EB;
         border-radius: 3rpx;
       }
     }
@@ -245,7 +245,7 @@ function goDetail(id) {
 
   &__type {
     font-size: 22rpx;
-    color: #1a73e8;
+    color: #2563EB;
     background-color: rgba(26, 115, 232, 0.08);
     padding: 4rpx 16rpx;
     border-radius: 6rpx;
@@ -273,7 +273,7 @@ function goDetail(id) {
   bottom: 160rpx;
   width: 104rpx;
   height: 104rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   border-radius: 52rpx;
   display: flex;
   align-items: center;

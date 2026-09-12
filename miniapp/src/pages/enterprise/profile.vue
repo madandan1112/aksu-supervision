@@ -169,7 +169,7 @@ function handleLogout() {
 }
 
 .profile-header {
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   padding: 48rpx 32rpx;
   display: flex;
   align-items: center;
@@ -231,9 +231,9 @@ function handleLogout() {
 
   &__edit {
     font-size: 26rpx;
-    color: #1a73e8;
+    color: #2563EB;
     padding: 8rpx 24rpx;
-    border: 2rpx solid #1a73e8;
+    border: 2rpx solid #2563EB;
     border-radius: 24rpx;
   }
 }

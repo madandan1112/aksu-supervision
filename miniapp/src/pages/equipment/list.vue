@@ -205,7 +205,7 @@ function goReport(id) {
   bottom: 160rpx;
   width: 104rpx;
   height: 104rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   border-radius: 52rpx;
   display: flex;
   align-items: center;

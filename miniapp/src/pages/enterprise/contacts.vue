@@ -161,7 +161,7 @@ function deleteContact(item) {
 .btn-add {
   width: 100%;
   height: 80rpx;
-  background-color: #1a73e8;
+  background-color: #2563EB;
   color: #ffffff;
   font-size: 28rpx;
   border-radius: 40rpx;
@@ -197,7 +197,7 @@ function deleteContact(item) {
 
   &__avatar-text {
     font-size: 32rpx;
-    color: #1a73e8;
+    color: #2563EB;
     font-weight: 600;
   }
 
@@ -230,7 +230,7 @@ function deleteContact(item) {
 
   &__btn {
     font-size: 24rpx;
-    color: #1a73e8;
+    color: #2563EB;
     padding: 8rpx 16rpx;
 
     &--danger { color: #ff3b30; }
@@ -306,7 +306,7 @@ function deleteContact(item) {
       color: #666666;
     }
     &--confirm {
-      background-color: #1a73e8;
+      background-color: #2563EB;
       color: #ffffff;
     }
   }

@@ -242,15 +242,25 @@
     <view v-if="scanned" class="rescan-btn">
       <button class="btn-rescan" @tap="resetScan">重新扫码</button>
     </view>
+
+    <InspTabBar v-if="userStore.isInspector" active="/pages/scan/index" />
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/stores/user'
 import { get } from '@/utils/request'
+import InspTabBar from '@/components/InspTabBar.vue'
 
 const userStore = useUserStore()
+
+onShow(() => {
+  if (userStore.isInspector) {
+    uni.hideTabBar({ animation: false }).catch?.(() => {})
+  }
+})
 
 const scanned = ref(false)
 const creditCode = ref('')
@@ -330,9 +340,9 @@ async function loadEnterpriseInfo(code) {
     if (userStore.isInspector) {
       // 执法人员：加载全景档案
       const [appealData, rectData, reportData, contactData, inspData] = await Promise.allSettled([
-        get('/admin/appeal/list', { enterpriseId: entId, page: 1, size: 50 }),
+        get('/inspector/appeal/list', { enterpriseId: entId, page: 1, size: 50 }),
         get('/inspector/rectification/pending', { enterpriseId: entId, page: 1, size: 50 }),
-        get('/admin/report/list', { enterpriseId: entId, page: 1, size: 50 }),
+        get('/inspector/report/list', { enterpriseId: entId, page: 1, size: 50 }),
         get('/enterprise/contacts', { enterpriseId: entId }),
         get('/inspector/inspection/list', { enterpriseId: entId, page: 1, size: 50 })
       ])
@@ -432,7 +442,7 @@ function goRectDetail(id) {
     position: absolute;
     width: 40rpx;
     height: 40rpx;
-    border-color: #1a73e8;
+    border-color: #2563EB;
     border-style: solid;
     border-width: 0;
 
@@ -486,7 +496,7 @@ function goRectDetail(id) {
   &__btn {
     height: 80rpx;
     padding: 0 32rpx;
-    background-color: #1a73e8;
+    background-color: #2563EB;
     color: #ffffff;
     border-radius: 12rpx;
     font-size: 28rpx;
@@ -500,7 +510,7 @@ function goRectDetail(id) {
 }
 
 .result-header {
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   border-radius: 20rpx;
   padding: 40rpx 32rpx;
   margin-bottom: 24rpx;
@@ -668,7 +678,7 @@ function goRectDetail(id) {
 
   &__phone {
     font-size: 26rpx;
-    color: #1a73e8;
+    color: #2563EB;
   }
 }
 
@@ -696,7 +706,7 @@ function goRectDetail(id) {
 .btn-rescan {
   width: 100%;
   height: 88rpx;
-  background-color: #1a73e8;
+  background-color: #2563EB;
   color: #ffffff;
   border-radius: 44rpx;
   font-size: 30rpx;

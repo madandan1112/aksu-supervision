@@ -33,7 +33,7 @@
         <text class="period-separator">至</text>
         <picker mode="date" :value="form.periodEnd" @change="e => form.periodEnd = e.detail.value">
           <view class="period-picker">{{ form.periodEnd || '结束日期' }}</view>
-        </view>
+        </picker>
       </view>
     </view>
 
@@ -135,7 +135,7 @@ async function handleSubmit() {
   background-color: #f9f9f9;
 
   &--active {
-    border-color: #1a73e8;
+    border-color: #2563EB;
     background-color: rgba(26, 115, 232, 0.06);
   }
 
@@ -199,7 +199,7 @@ async function handleSubmit() {
 .btn-primary {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;

@@ -193,7 +193,7 @@ function goFeedback() {
 
   &__arrow {
     font-size: 40rpx;
-    color: #1a73e8;
+    color: #2563EB;
     font-weight: 600;
   }
 
@@ -219,7 +219,7 @@ function goFeedback() {
 .btn-primary {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;

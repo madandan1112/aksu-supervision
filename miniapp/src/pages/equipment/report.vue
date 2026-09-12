@@ -183,14 +183,14 @@ async function handleSubmit() {
   background-color: #f9f9f9;
 
   &--active {
-    border-color: #1a73e8;
+    border-color: #2563EB;
     background-color: rgba(26, 115, 232, 0.06);
   }
 
   &__text {
     font-size: 28rpx;
     color: #333333;
-    .type-btn--active & { color: #1a73e8; font-weight: 600; }
+    .type-btn--active & { color: #2563EB; font-weight: 600; }
   }
 }
 
@@ -259,7 +259,7 @@ async function handleSubmit() {
 .btn-primary {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;

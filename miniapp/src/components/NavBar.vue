@@ -22,7 +22,7 @@ import { ref } from 'vue'
 const props = defineProps({
   title: { type: String, default: '' },
   showBack: { type: Boolean, default: true },
-  background: { type: String, default: '#1A73E8' },
+  background: { type: String, default: '#2563EB' },
   color: { type: String, default: '#ffffff' }
 })
 
@@ -52,7 +52,7 @@ function handleBack() {
   left: 0;
   right: 0;
   z-index: 999;
-  background-color: #1a73e8;
+  background-color: #2563EB;
 
   &__content {
     display: flex;

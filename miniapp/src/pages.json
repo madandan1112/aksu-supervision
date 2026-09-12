@@ -21,17 +21,20 @@
     { "path": "pages/message/detail", "style": { "navigationBarTitleText": "消息详情" } },
     { "path": "pages/ocr/index", "style": { "navigationBarTitleText": "OCR识别" } },
     { "path": "pages/scan/index", "style": { "navigationBarTitleText": "扫码查询" } },
+    { "path": "pages/inspection/create", "style": { "navigationBarTitleText": "现场检查" } },
+    { "path": "pages/alerts/list", "style": { "navigationBarTitleText": "预警处置", "enablePullDownRefresh": false } },
+    { "path": "pages/inspector/profile", "style": { "navigationStyle": "custom" } },
     { "path": "pages/login/index", "style": { "navigationStyle": "custom" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "监管平台",
-    "navigationBarBackgroundColor": "#1A73E8",
+    "navigationBarBackgroundColor": "#2563EB",
     "backgroundColor": "#F5F6FA"
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#1A73E8",
+    "selectedColor": "#2563EB",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [

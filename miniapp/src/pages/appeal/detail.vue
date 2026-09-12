@@ -199,7 +199,7 @@ async function submitRating() {
     font-weight: 600;
 
     .status-bar--pending & { color: #ff9500; }
-    .status-bar--processing & { color: #1a73e8; }
+    .status-bar--processing & { color: #2563EB; }
     .status-bar--replied & { color: #34c759; }
     .status-bar--closed & { color: #999999; }
   }
@@ -228,7 +228,7 @@ async function submitRating() {
 
   &__type {
     font-size: 22rpx;
-    color: #1a73e8;
+    color: #2563EB;
     background-color: rgba(26, 115, 232, 0.08);
     padding: 4rpx 16rpx;
     border-radius: 6rpx;
@@ -336,7 +336,7 @@ async function submitRating() {
 .btn-rating {
   width: 100%;
   height: 80rpx;
-  background-color: #1a73e8;
+  background-color: #2563EB;
   color: #ffffff;
   font-size: 28rpx;
   border-radius: 40rpx;

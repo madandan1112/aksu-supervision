@@ -140,7 +140,7 @@ async function handleSubmit() {
 .btn-primary {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #1a73e8, #4a90e8);
+  background: linear-gradient(135deg, #2563EB, #3b82f6);
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;

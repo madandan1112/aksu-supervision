@@ -211,7 +211,7 @@ function copyResult() {
 
   &__label {
     font-size: 24rpx;
-    color: #1a73e8;
+    color: #2563EB;
     background-color: rgba(26, 115, 232, 0.08);
     padding: 4rpx 12rpx;
     border-radius: 6rpx;
@@ -236,7 +236,7 @@ function copyResult() {
 .btn-copy {
   width: 100%;
   height: 80rpx;
-  background-color: #1a73e8;
+  background-color: #2563EB;
   color: #ffffff;
   font-size: 28rpx;
   border-radius: 40rpx;

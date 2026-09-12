@@ -121,7 +121,7 @@ function loadMore() {
   &__text {
     font-size: 26rpx;
     color: #666666;
-    .filter-item--active & { color: #1a73e8; font-weight: 600; }
+    .filter-item--active & { color: #2563EB; font-weight: 600; }
   }
 }
 
@@ -145,7 +145,7 @@ function loadMore() {
 
   &__type {
     font-size: 24rpx;
-    color: #1a73e8;
+    color: #2563EB;
     background-color: rgba(26, 115, 232, 0.08);
     padding: 4rpx 16rpx;
     border-radius: 6rpx;
