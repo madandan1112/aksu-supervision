@@ -1,5 +1,5 @@
 <template>
-  <div id="app-wrapper" :class="{ 'full-screen': isFullScreen }">
+  <div id="app-wrapper" :class="{ 'full-screen': isFullScreen, 'inspector-mode': userStore.isInspector }">
     <router-view />
     <!-- 底部药丸TabBar -->
     <nav v-if="showTabBar" class="pill-nav">
@@ -54,9 +54,7 @@ const currentTabs = computed(() => {
 })
 
 const showTabBar = computed(() => {
-  const token = localStorage.getItem('token')
-  const hiddenRoutes = ['/', '/login']
-  return token && !hiddenRoutes.includes(route.path)
+  return userStore.isLoggedIn && !['/', '/login'].includes(route.path)
 })
 
 const isFullScreen = computed(() => {
@@ -67,6 +65,7 @@ const currentTab = computed(() => {
   if (route.path.startsWith('/appeal')) return '/appeal'
   if (route.path.startsWith('/rectification')) return '/rectification'
   if (route.path.startsWith('/scan')) return '/scan'
+  if (route.path.startsWith('/profile')) return '/profile'
   return route.path
 })
 </script>
@@ -89,28 +88,40 @@ a {
   color: inherit;
 }
 
-/* 全局CSS变量 */
+/* 全局CSS变量（市监V2：企业蓝 2563EB / 执法红 C8102E） */
 :root {
-  --bg-primary: #F0F2F5;
+  --bg-primary: #F6F7F9;
   --bg-card: #FFFFFF;
-  --text-primary: #1A1A2E;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
-  --accent-start: #5B7FFF;
-  --accent-end: #7B61FF;
-  --accent-blue: #5B7FFF;
-  --accent-purple: #7B61FF;
-  --accent-green: #34D399;
-  --accent-orange: #F59E0B;
+  --text-primary: #18181B;
+  --text-secondary: #52525B;
+  --text-tertiary: #9CA3AF;
+  --accent-start: #2563EB;
+  --accent-end: #1D4ED8;
+  --accent-blue: #2563EB;
+  --accent-purple: #7C3AED;
+  --accent-green: #34C759;
+  --accent-orange: #FF9500;
   --accent-red: #EF4444;
-  --shadow-sm: 0 2px 8px rgba(91, 127, 255, 0.08);
-  --shadow-md: 0 4px 16px rgba(91, 127, 255, 0.12);
-  --shadow-lg: 0 8px 32px rgba(91, 127, 255, 0.15);
+  --brand-red: #C8102E;
+  --brand-red-light: #D5263D;
+  --brand-red-dark: #B00E24;
+  --brand-gold: #C9A063;
+  --brand-gold-light: #E5C893;
+  --shadow-sm: 0 2px 8px rgba(24, 24, 27, 0.06);
+  --shadow-md: 0 4px 16px rgba(24, 24, 27, 0.10);
+  --shadow-lg: 0 8px 32px rgba(24, 24, 27, 0.14);
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
   --radius-xl: 24px;
   --radius-pill: 999px;
+}
+
+/* 执法模式：主色切换为市监红 */
+#app-wrapper.inspector-mode {
+  --accent-start: #D5263D;
+  --accent-end: #B00E24;
+  --accent-blue: #C8102E;
 }
 </style>
 
@@ -180,7 +191,11 @@ a {
 
 .pill-tab.active {
   background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
-  box-shadow: 0 4px 12px rgba(91, 127, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+#app-wrapper.inspector-mode .pill-tab.active {
+  box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
 }
 
 .pill-tab.active .pill-icon,
@@ -189,7 +204,7 @@ a {
 }
 
 .pill-tab:not(.active):active {
-  background: rgba(91, 127, 255, 0.06);
+  background: rgba(24, 24, 27, 0.05);
 }
 
 @media (max-width: 360px) {

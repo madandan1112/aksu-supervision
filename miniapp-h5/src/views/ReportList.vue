@@ -25,7 +25,7 @@
         <span>暂无报告记录</span>
       </div>
 
-      <div v-for="item in list" :key="item.id" class="report-card">
+      <div v-for="item in list" :key="item.id" class="report-card" @click="showDetail(item)">
         <div class="card-top">
           <span class="report-title">{{ item.title || item.reportName || '检查报告' }}</span>
           <span class="report-type">{{ typeText(item.reportType) }}</span>
@@ -35,6 +35,33 @@
           <span class="report-time">{{ item.createTime }}</span>
         </div>
         <div v-if="item.expireDate" class="expire-row">有效期至：{{ item.expireDate }}</div>
+      </div>
+    </div>
+
+    <!-- 报告详情弹层 -->
+    <div v-if="detailVisible" class="modal-mask" @click.self="detailVisible = false">
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <h3>报告详情</h3>
+          <button class="modal-close" @click="detailVisible = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-row"><span class="detail-label">报告名称</span><span class="detail-value">{{ detail.title || detail.reportName || '-' }}</span></div>
+          <div class="detail-row"><span class="detail-label">报告编号</span><span class="detail-value">{{ detail.reportNo || '-' }}</span></div>
+          <div class="detail-row"><span class="detail-label">报告类型</span><span class="detail-value">{{ typeText(detail.reportType) }}</span></div>
+          <div class="detail-row"><span class="detail-label">审核状态</span><span class="detail-value">{{ statusText(detail.status) }}</span></div>
+          <div class="detail-row"><span class="detail-label">有效期至</span><span class="detail-value">{{ detail.expireDate || '-' }}</span></div>
+          <div class="detail-row"><span class="detail-label">提交时间</span><span class="detail-value">{{ detail.createTime || '-' }}</span></div>
+          <div class="detail-row" v-if="detail.reviewComment"><span class="detail-label">审核意见</span><span class="detail-value">{{ detail.reviewComment }}</span></div>
+          <div class="detail-row" v-if="detail.reviewedBy"><span class="detail-label">审核人</span><span class="detail-value">{{ detail.reviewedBy }}</span></div>
+          <div class="detail-row" v-if="detail.fileUrl">
+            <span class="detail-label">报告文件</span>
+            <a class="detail-link" :href="fileHref(detail.fileUrl)" target="_blank">查看文件</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-close" @click="detailVisible = false">关闭</button>
+        </div>
       </div>
     </div>
   </div>
@@ -49,6 +76,8 @@ const userStore = useUserStore()
 const list = ref([])
 const loading = ref(false)
 const currentFilter = ref('')
+const detailVisible = ref(false)
+const detail = ref({})
 
 const filters = [
   { label: '全部', value: '' },
@@ -70,6 +99,18 @@ const statusText = (s) => ({
 }[s] || '待审核')
 
 const typeText = (t) => t || '常规检查'
+
+// 文件地址：相对路径（对象存储objectName）拼后端网关，完整URL直接用
+const fileHref = (url) => {
+  if (!url) return '#'
+  if (url.startsWith('http')) return url
+  return '/api/file/' + url.replace(/^\//, '')
+}
+
+const showDetail = (item) => {
+  detail.value = item
+  detailVisible.value = true
+}
 
 const loadList = async () => {
   loading.value = true
@@ -154,6 +195,7 @@ onMounted(loadList)
   padding: 16px;
   margin-bottom: 10px;
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
 }
 .card-top {
   display: flex;
@@ -170,8 +212,8 @@ onMounted(loadList)
 }
 .report-type {
   font-size: 11px;
-  background: #E0E7FF;
-  color: #5B7FFF;
+  background: #DBEAFE;
+  color: #2563EB;
   padding: 2px 8px;
   border-radius: 6px;
   flex-shrink: 0;
@@ -212,5 +254,81 @@ onMounted(loadList)
   gap: 8px;
   color: #CBD5E1;
   font-size: 14px;
+}
+
+/* 详情弹层 */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+.modal-close {
+  border: none;
+  background: #F1F5F9;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 16px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F8FAFC;
+  font-size: 13px;
+}
+.detail-label {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+.detail-value {
+  color: var(--text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+.detail-link {
+  color: #2563EB;
+  text-decoration: none;
+}
+.modal-footer {
+  margin-top: 16px;
+}
+.btn-close {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
 }
 </style>

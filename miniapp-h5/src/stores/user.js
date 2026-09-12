@@ -11,6 +11,9 @@ export const useUserStore = defineStore('user', {
   getters: {
     isInspector: (state) => state.userType === 'inspector',
     isEnterprise: (state) => state.userType === 'enterprise' || state.userType === 'enterprise_user',
+    isEnterpriseAdmin: (state) => state.userInfo?.roleId === 12 || state.userInfo?.roleId === 10,
+    isEnterpriseStaff: (state) => state.userInfo?.roleId === 13,
+    canEditEnterprise: (state) => state.userInfo?.roleId === 12 || state.userInfo?.roleId === 10,
     isLoggedIn: (state) => !!state.token
   },
 

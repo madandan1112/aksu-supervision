@@ -1,6 +1,15 @@
 <template>
   <div class="profile-page">
     <div class="page-content">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <button class="back-btn" @click="$router.back()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <h2>个人信息</h2>
+        <div style="width:36px"></div>
+      </div>
+
       <!-- 顶部用户卡 -->
       <div class="profile-hero">
         <div class="user-card">
@@ -37,7 +46,10 @@
 
       <!-- 企业信息 -->
       <div v-if="userStore.isEnterprise && enterpriseInfo" class="info-card">
-        <div class="card-title">企业信息</div>
+        <div class="card-title-row">
+          <div class="card-title">企业信息</div>
+          <button class="edit-btn" @click="$router.push('/enterprise/edit')">编辑</button>
+        </div>
         <div class="info-row">
           <div class="info-item">
             <span class="info-label">企业名称</span>
@@ -51,6 +63,66 @@
             <span class="info-label">法人代表</span>
             <span class="info-value">{{ enterpriseInfo.legalPerson || '-' }}</span>
           </div>
+          <div class="info-item">
+            <span class="info-label">行业</span>
+            <span class="info-value">{{ enterpriseInfo.industry || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">所属区域</span>
+            <span class="info-value">{{ enterpriseInfo.area || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">联系电话</span>
+            <span class="info-value">{{ enterpriseInfo.phone || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">详细地址</span>
+            <span class="info-value">{{ enterpriseInfo.address || '-' }}</span>
+          </div>
+        </div>
+
+        <!-- 营业执照未上传提示 -->
+        <div v-if="!enterpriseInfo.licenseUrl" class="license-warning">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          营业执照未上传，请完善企业信息
+        </div>
+
+        <!-- 证照图片预览 -->
+        <div v-if="enterpriseInfo.licenseUrl || enterpriseInfo.storefrontPhoto || enterpriseInfo.interiorPhoto" class="photo-preview-section">
+          <div class="photo-preview-title">证照信息</div>
+          <div class="photo-preview-grid">
+            <div v-if="enterpriseInfo.licenseUrl" class="photo-preview-item" @click="previewImage(enterpriseInfo.licenseUrl)">
+              <img :src="enterpriseInfo.licenseUrl" class="photo-preview-img" />
+              <span class="photo-preview-label">营业执照</span>
+            </div>
+            <div v-if="enterpriseInfo.storefrontPhoto" class="photo-preview-item" @click="previewImage(enterpriseInfo.storefrontPhoto)">
+              <img :src="enterpriseInfo.storefrontPhoto" class="photo-preview-img" />
+              <span class="photo-preview-label">门头照</span>
+            </div>
+            <div v-if="enterpriseInfo.interiorPhoto" class="photo-preview-item" @click="previewImage(enterpriseInfo.interiorPhoto)">
+              <img :src="enterpriseInfo.interiorPhoto" class="photo-preview-img" />
+              <span class="photo-preview-label">店内照</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资质证书 -->
+        <div v-if="profileQualificationList.length" class="photo-preview-section">
+          <div class="photo-preview-title">资质证书（{{ profileQualificationList.length }}张）</div>
+          <div class="photo-preview-grid">
+            <div v-for="(url, idx) in profileQualificationList" :key="idx" class="photo-preview-item" @click="previewImage(url, profileQualificationList, idx)">
+              <img :src="url" class="photo-preview-img" />
+              <span class="photo-preview-label">证书{{ idx + 1 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 企业信息未填写提示 -->
+      <div v-if="userStore.isEnterprise && !enterpriseInfo" class="info-card">
+        <div class="empty-enterprise">
+          <p>企业信息尚未完善</p>
+          <button class="fill-btn" @click="$router.push('/enterprise/edit')">完善企业信息</button>
         </div>
       </div>
 
@@ -59,8 +131,8 @@
         <div class="action-title">快捷操作</div>
         <div class="action-list">
           <div class="action-item" @click="$router.push('/appeal')">
-            <div class="action-icon" style="background: linear-gradient(135deg, #E0E7FF, #C7D2FE);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B7FFF" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="action-icon" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
             <div class="action-body">
               <span class="action-name">{{ userStore.isInspector ? '诉求管理' : '我的诉求' }}</span>
@@ -113,6 +185,28 @@ const displayName = computed(() => {
   return userStore.userInfo?.realName || userStore.userInfo?.username || '用户'
 })
 
+// 资质证书列表
+const profileQualificationList = computed(() => {
+  if (!enterpriseInfo.value?.qualificationUrls) return []
+  try {
+    const parsed = typeof enterpriseInfo.value.qualificationUrls === 'string'
+      ? JSON.parse(enterpriseInfo.value.qualificationUrls) : enterpriseInfo.value.qualificationUrls
+    return Array.isArray(parsed) ? parsed : []
+  } catch { return [] }
+})
+
+// 图片预览（使用原生方式，兼容H5）
+const previewImage = (url, list, idx) => {
+  // H5环境使用简单的图片查看
+  if (list && list.length > 1) {
+    // 多图预览：打开第一张，用户可左右滑动
+    const images = list.join(',')
+    window.open(url, '_blank')
+  } else {
+    window.open(url, '_blank')
+  }
+}
+
 const loadEnterprise = async () => {
   if (userStore.isEnterprise) {
     try {
@@ -143,9 +237,34 @@ onMounted(loadEnterprise)
   margin: 0 auto;
   padding: 16px;
 }
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+.page-header h2 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
 
 /* Hero */
 .profile-hero {
+  margin-top: 8px;
   margin-bottom: 16px;
 }
 .user-card {
@@ -200,6 +319,54 @@ onMounted(loadEnterprise)
   color: var(--text-primary);
   margin-bottom: 12px;
 }
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.card-title-row .card-title {
+  margin-bottom: 0;
+}
+.edit-btn {
+  font-size: 13px;
+  color: var(--accent-start);
+  background: none;
+  border: 1px solid var(--accent-start);
+  border-radius: 14px;
+  padding: 3px 12px;
+  cursor: pointer;
+}
+.license-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #FFFBEB;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #92400E;
+}
+.empty-enterprise {
+  text-align: center;
+  padding: 20px 0;
+}
+.empty-enterprise p {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+}
+.fill-btn {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
 .info-row {
   display: flex;
   flex-direction: column;
@@ -224,6 +391,43 @@ onMounted(loadEnterprise)
   color: var(--text-primary);
   text-align: right;
   max-width: 60%;
+  word-break: break-all;
+}
+
+/* 证照预览 */
+.photo-preview-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #F1F5F9;
+}
+.photo-preview-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.photo-preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.photo-preview-item {
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
+}
+.photo-preview-img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+.photo-preview-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
 }
 
 /* 操作卡片 */

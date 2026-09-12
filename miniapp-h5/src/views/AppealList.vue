@@ -86,7 +86,7 @@ const loadList = async () => {
   try {
     const params = { page: 1, size: 20 }
     if (currentFilter.value) params.status = currentFilter.value
-    const apiPath = userStore.isInspector ? '/admin/appeal/list' : '/appeal/list'
+    const apiPath = userStore.isInspector ? '/inspector/appeal/list' : '/appeal/list'
     const res = await request.get(apiPath, { params })
     const d = res.data?.data || res.data
     list.value = d?.content || d?.list || d?.records || (Array.isArray(d) ? d : [])
@@ -203,7 +203,7 @@ onMounted(loadList)
   border-radius: 6px;
 }
 .status-pill.pending { background: #FEF3C7; color: #D97706; }
-.status-pill.processing { background: #E0E7FF; color: #5B7FFF; }
+.status-pill.processing { background: #DBEAFE; color: #2563EB; }
 .status-pill.done { background: #D1FAE5; color: #059669; }
 .status-pill.evaluated { background: #EDE9FE; color: #7C3AED; }
 .appeal-time {

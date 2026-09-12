@@ -34,8 +34,26 @@
         </div>
 
         <template v-if="userStore.isInspector && (detail.status === 'PENDING' || detail.status === 'ASSIGNED' || detail.status === '待处理' || detail.status === '已分配')">
-          <button class="btn-gradient" @click="handleAppeal">处理诉求</button>
+          <button class="btn-gradient" @click="handleVisible = true">处理诉求</button>
         </template>
+      </div>
+
+      <!-- 处理诉求弹层 -->
+      <div v-if="handleVisible" class="modal-mask" @click.self="handleVisible = false">
+        <div class="modal-sheet">
+          <div class="modal-header">
+            <h3>处理诉求</h3>
+            <button class="modal-close" @click="handleVisible = false">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-label">处理结果 <span class="required">*</span></div>
+            <textarea v-model="handleResultText" rows="4" placeholder="请输入处理结果说明" class="handle-textarea"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-plain" @click="handleVisible = false">取消</button>
+            <button class="btn-gradient" :disabled="handleSubmitting" @click="submitHandle">{{ handleSubmitting ? '提交中...' : '提交' }}</button>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="!loading" class="empty-card">
@@ -87,18 +105,27 @@ const loadDetail = async () => {
   }
 }
 
-const handleAppeal = async () => {
-  const handleResult = window.prompt('请输入处理结果：')
-  if (!handleResult) return
+const handleVisible = ref(false)
+const handleResultText = ref('')
+const handleSubmitting = ref(false)
+
+const submitHandle = async () => {
+  const handleResult = handleResultText.value?.trim()
+  if (!handleResult) { window.alert('请填写处理结果'); return }
+  handleSubmitting.value = true
   try {
-    await request.put('/admin/appeal/' + route.params.id + '/handle', null, {
+    await request.put('/inspector/appeal/' + route.params.id + '/handle', null, {
       params: { handleResult }
     })
     window.alert('处理成功')
+    handleVisible.value = false
+    handleResultText.value = ''
     loadDetail()
   } catch (e) {
     const msg = e.response?.data?.message || '处理失败'
     window.alert(msg)
+  } finally {
+    handleSubmitting.value = false
   }
 }
 
@@ -106,6 +133,48 @@ onMounted(loadDetail)
 </script>
 
 <style scoped>
+/* 处理诉求弹层 */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-header h3 { font-size: 16px; font-weight: 600; margin: 0; }
+.modal-close {
+  border: none; background: #F1F5F9; width: 28px; height: 28px;
+  border-radius: 50%; font-size: 16px; color: #64748B; cursor: pointer;
+}
+.form-label { font-size: 13px; color: #475569; margin-bottom: 8px; }
+.required { color: #EF4444; }
+.handle-textarea {
+  width: 100%; border: 1px solid #E2E8F0; border-radius: 8px;
+  padding: 10px; font-size: 14px; box-sizing: border-box; resize: vertical;
+}
+.handle-textarea:focus { outline: none; border-color: #2563EB; }
+.modal-footer { display: flex; gap: 10px; margin-top: 16px; }
+.btn-plain {
+  flex: 1; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px;
+  background: #fff; color: #475569; font-size: 15px; cursor: pointer;
+}
+.btn-gradient { flex: 1; }
+
 .appeal-detail-page {
   min-height: 100vh;
   background: var(--bg-primary);
@@ -159,7 +228,7 @@ onMounted(loadDetail)
   border-radius: 6px;
 }
 .status-pill.pending { background: #FEF3C7; color: #D97706; }
-.status-pill.processing { background: #E0E7FF; color: #5B7FFF; }
+.status-pill.processing { background: #DBEAFE; color: #2563EB; }
 .status-pill.done { background: #D1FAE5; color: #059669; }
 .status-pill.evaluated { background: #EDE9FE; color: #7C3AED; }
 .type-badge {

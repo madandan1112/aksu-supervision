@@ -188,7 +188,7 @@ onMounted(loadList)
   border-radius: 6px;
 }
 .status-pill.pending { background: #FEF3C7; color: #D97706; }
-.status-pill.processing { background: #E0E7FF; color: #5B7FFF; }
+.status-pill.processing { background: #DBEAFE; color: #2563EB; }
 .status-pill.done { background: #D1FAE5; color: #059669; }
 .status-pill.rejected { background: #FEE2E2; color: #DC2626; }
 

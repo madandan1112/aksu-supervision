@@ -16,8 +16,8 @@
         <!-- 渐变状态卡 -->
         <div class="status-card" :class="userStore.isInspector ? 'inspector' : 'enterprise'">
           <div class="status-info">
-            <span class="status-label">{{ userStore.isInspector ? '今日检查任务' : '企业状态' }}</span>
-            <span class="status-value">{{ userStore.isInspector ? '3 项待完成' : '正常运营' }}</span>
+            <span class="status-label">{{ userStore.isInspector ? '待执行检查任务' : '企业状态' }}</span>
+            <span class="status-value">{{ userStore.isInspector ? (pendingTasks + ' 项待完成') : (enterpriseExists ? (enterpriseComplete ? '正常运营' : '资料待完善') : '未注册企业') }}</span>
           </div>
           <div class="status-icon">
             <svg v-if="userStore.isInspector" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" opacity="0.9">
@@ -48,8 +48,8 @@
         <!-- 企业用户功能 -->
         <template v-if="userStore.isEnterprise">
           <div class="feature-card" @click="$router.push('/appeal/create')">
-            <div class="feature-icon" style="background: linear-gradient(135deg, #E0E7FF, #C7D2FE);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B7FFF" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <div class="feature-icon" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
             <span class="feature-name">诉求提交</span>
             <span class="feature-desc">发起新诉求</span>
@@ -63,28 +63,42 @@
           </div>
           <div class="feature-card" @click="$router.push('/rectification')">
             <div class="feature-icon" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             </div>
             <span class="feature-name">整改反馈</span>
             <span class="feature-desc">提交整改</span>
           </div>
           <div class="feature-card" @click="$router.push('/report')">
-            <div class="feature-icon" style="background: linear-gradient(135deg, #E0E7FF, #C7D2FE);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7B61FF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <div class="feature-icon" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
             </div>
             <span class="feature-name">合规报告</span>
             <span class="feature-desc">查看报告</span>
+          </div>
+  <div class="feature-card" :class="{ 'warning': enterpriseExists && !enterpriseComplete }" @click="$router.push(enterpriseExists ? '/enterprise/edit' : '/enterprise/register')">
+            <div class="feature-icon" :style="enterpriseExists && !enterpriseComplete ? { background: 'linear-gradient(135deg, #FFEDD5, #FED7AA)' } : { background: 'linear-gradient(135deg, #FCE7F3, #FBCFE8)' }">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" :stroke="enterpriseExists && !enterpriseComplete ? '#FF9500' : '#C8102E'" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="feature-name">{{ enterpriseExists ? (enterpriseComplete ? '企业信息' : '补充资料') : '企业注册' }}</span>
+            <span class="feature-desc">{{ enterpriseExists ? (enterpriseComplete ? '查看信息' : '资料不全') : '注册认证' }}</span>
           </div>
         </template>
 
         <!-- 执法人员功能 -->
         <template v-if="userStore.isInspector">
           <div class="feature-card" @click="$router.push('/scan')">
-            <div class="feature-icon" style="background: linear-gradient(135deg, #E0E7FF, #C7D2FE);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B7FFF" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+            <div class="feature-icon" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
             </div>
             <span class="feature-name">扫码查企</span>
             <span class="feature-desc">查询企业</span>
+          </div>
+          <div class="feature-card" @click="$router.push('/inspection/create')">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <span class="feature-name">现场检查</span>
+            <span class="feature-desc">执法记录</span>
           </div>
           <div class="feature-card" @click="$router.push('/appeal')">
             <div class="feature-icon" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A);">
@@ -95,14 +109,14 @@
           </div>
           <div class="feature-card" @click="$router.push('/rectification')">
             <div class="feature-icon" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             </div>
             <span class="feature-name">整改验收</span>
             <span class="feature-desc">验收整改</span>
           </div>
           <div class="feature-card" @click="$router.push('/report')">
             <div class="feature-icon" style="background: linear-gradient(135deg, #FCE7F3, #FBCFE8);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
             </div>
             <span class="feature-name">报告审核</span>
             <span class="feature-desc">审核报告</span>
@@ -155,6 +169,8 @@ import request from '../utils/request'
 const userStore = useUserStore()
 const appealList = ref([])
 const rectList = ref([])
+const enterpriseInfo = ref(null)
+const pendingTasks = ref(0)
 
 const displayName = computed(() => {
   return userStore.userInfo?.realName || userStore.userInfo?.username || '用户'
@@ -200,9 +216,18 @@ const rectStatusText = (s) => ({
   'REJECTED': '未通过', '未通过': '未通过'
 }[s] || '待整改')
 
+const enterpriseComplete = computed(() => {
+  if (!enterpriseInfo.value) return false
+  const e = enterpriseInfo.value
+  // 必填项：营业执照、门头照、店内照
+  return !!(e.licenseUrl && e.storefrontPhoto && e.interiorPhoto && e.name && e.creditCode)
+})
+
+const enterpriseExists = computed(() => !!enterpriseInfo.value?.id)
+
 const loadData = async () => {
   try {
-    const appealPath = userStore.isInspector ? '/admin/appeal/list' : '/appeal/list'
+    const appealPath = userStore.isInspector ? '/inspector/appeal/list' : '/appeal/list'
     const rectPath = userStore.isInspector ? '/inspector/rectification/pending' : '/enterprise/rectification/list'
     const [aRes, rRes] = await Promise.allSettled([
       request.get(appealPath, { params: { page: 1, size: 5 } }).catch(() => null),
@@ -215,6 +240,25 @@ const loadData = async () => {
     if (rRes.value) {
       const d = rRes.value.data?.data || rRes.value.data
       rectList.value = d?.list || d?.content || d?.records || (Array.isArray(d) ? d : [])
+    }
+    // 查询企业信息
+    if (userStore.isEnterprise) {
+      try {
+        const eRes = await request.get('/enterprise/profile').catch(() => null)
+        if (eRes?.data?.data || eRes?.data) {
+          enterpriseInfo.value = eRes.data?.data || eRes.data
+        }
+      } catch {}
+    }
+    // 执法人员：真实任务统计（assigned+claimed 为待完成）
+    if (userStore.isInspector) {
+      try {
+        const sRes = await request.get('/inspector/task/statistics').catch(() => null)
+        const s = sRes?.data?.data || sRes?.data
+        if (s) {
+          pendingTasks.value = Number(s.assigned || 0) + Number(s.claimed || 0)
+        }
+      } catch {}
     }
   } catch (e) {}
 }
@@ -285,11 +329,11 @@ onMounted(loadData)
 }
 
 .status-card.inspector {
-  background: linear-gradient(135deg, #5B7FFF, #7B61FF);
+  background: linear-gradient(135deg, #D5263D, #B00E24);
 }
 
 .status-card.enterprise {
-  background: linear-gradient(135deg, #10B981, #34D399);
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
 }
 
 .status-label {
@@ -372,6 +416,11 @@ onMounted(loadData)
   box-shadow: var(--shadow-md);
 }
 
+.feature-card.warning {
+  border: 2px solid #FF9500;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+}
+
 .feature-icon {
   width: 48px;
   height: 48px;
@@ -431,8 +480,8 @@ onMounted(loadData)
 }
 
 .list-dot.pending { background: #F59E0B; }
-.list-dot.processing { background: #5B7FFF; }
-.list-dot.done { background: #10B981; }
+.list-dot.processing { background: #2563EB; }
+.list-dot.done { background: #34C759; }
 .list-dot.rejected { background: #EF4444; }
 
 .list-body {
@@ -465,7 +514,7 @@ onMounted(loadData)
 }
 
 .list-status.pending { background: #FEF3C7; color: #D97706; }
-.list-status.processing { background: #E0E7FF; color: #5B7FFF; }
+.list-status.processing { background: #DBEAFE; color: #2563EB; }
 .list-status.done { background: #D1FAE5; color: #059669; }
 .list-status.rejected { background: #FEE2E2; color: #DC2626; }
 

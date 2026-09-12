@@ -50,6 +50,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/inspection/create',
+    name: 'InspectionCreate',
+    component: () => import('../views/InspectionCreate.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/report',
     name: 'ReportList',
     component: () => import('../views/ReportList.vue'),
@@ -60,6 +66,24 @@ const routes = [
     name: 'Profile',
     component: () => import('../views/Profile.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/enterprise/edit',
+    name: 'EnterpriseEdit',
+    component: () => import('../views/EnterpriseEdit.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/enterprise/register',
+    name: 'EnterpriseRegister',
+    component: () => import('../views/EnterpriseRegister.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/public/credit/:creditCode',
+    name: 'PublicCredit',
+    component: () => import('../views/PublicCredit.vue'),
+    meta: { public: true }
   }
 ]
 

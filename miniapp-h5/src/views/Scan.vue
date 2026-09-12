@@ -15,8 +15,19 @@
         <div class="search-input-wrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input v-model="searchCode" type="text" placeholder="输入企业ID或统一信用代码" @keyup.enter="doSearch" />
+          <button class="btn-scan-icon" @click="handleScan" title="扫码">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="14.01"/><line x1="17" y1="14" x2="17" y2="14.01"/><line x1="20" y1="14" x2="20" y2="14.01"/><line x1="14" y1="17" x2="14" y2="17.01"/><line x1="17" y1="17" x2="17" y2="17.01"/><line x1="20" y1="17" x2="20" y2="17.01"/><line x1="14" y1="20" x2="14" y2="20.01"/><line x1="17" y1="20" x2="17" y2="20.01"/><line x1="20" y1="20" x2="20" y2="20.01"/></svg>
+          </button>
         </div>
         <button class="btn-search" @click="doSearch">查询</button>
+      </div>
+
+      <!-- 扫码环境提示 -->
+      <div v-if="scanTip" class="scan-tip">{{ scanTip }}</div>
+
+      <!-- 模拟扫码按钮（仅开发测试显示） -->
+      <div v-if="showMockScan" class="mock-scan-section">
+        <button class="btn-mock-scan" @click="mockScan">模拟扫码（测试）</button>
       </div>
 
       <!-- 结果卡片 -->
@@ -53,11 +64,11 @@
             <span class="info-value">{{ enterprise.businessScope || '-' }}</span>
           </div>
         </div>
-      </div>
-
-      <div v-if="searched && !enterprise" class="empty-card">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>未查询到相关企业信息</span>
+        <!-- 发起现场检查按钮 -->
+        <button class="btn-inspect" @click="goInspection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          发起现场检查
+        </button>
       </div>
     </div>
   </div>
@@ -65,11 +76,73 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import request from '../utils/request'
 
+const router = useRouter()
 const searchCode = ref('')
 const enterprise = ref(null)
 const searched = ref(false)
+const scanTip = ref('')
+const showMockScan = ref(false)
+
+// 检测是否在企微/微信环境
+const isWechatEnv = () => {
+  const ua = navigator.userAgent.toLowerCase()
+  return ua.includes('micromessenger') || ua.includes('wxwork')
+}
+
+// 尝试调用微信JS-SDK扫码
+const wxScan = () => {
+  return new Promise((resolve, reject) => {
+    if (typeof window.wx === 'undefined') {
+      reject(new Error('微信JS-SDK未加载'))
+      return
+    }
+    wx.scanQRCode({
+      needResult: 1,
+      scanType: ['qrCode', 'barCode'],
+      success: (res) => {
+        const result = res.resultStr || ''
+        resolve(result)
+      },
+      fail: (err) => {
+        reject(err)
+      }
+    })
+  })
+}
+
+const handleScan = async () => {
+  scanTip.value = ''
+  if (isWechatEnv()) {
+    try {
+      const result = await wxScan()
+      if (result) {
+        searchCode.value = result
+        await doSearch()
+      }
+    } catch (e) {
+      scanTip.value = '微信扫码调用失败，请使用输入框查询'
+      // 显示模拟扫码（用于测试）
+      showMockScan.value = true
+    }
+  } else {
+    scanTip.value = '请在微信/企业微信中使用扫码功能，或使用输入框查询'
+    // 在非微信环境显示模拟扫码按钮
+    showMockScan.value = true
+  }
+}
+
+// 模拟扫码（仅测试环境使用）
+const mockScan = () => {
+  const mockCodes = ['91110000MA00XXXXXX', '91310000XXXXXXXXXX', 'test-enterprise-001']
+  const randomCode = mockCodes[Math.floor(Math.random() * mockCodes.length)]
+  searchCode.value = randomCode
+  scanTip.value = `模拟扫码结果：${randomCode}`
+  showMockScan.value = false
+  doSearch()
+}
 
 const doSearch = async () => {
   if (!searchCode.value.trim()) {
@@ -85,6 +158,12 @@ const doSearch = async () => {
     window.alert(msg)
     searched.value = true
     enterprise.value = null
+  }
+}
+
+const goInspection = () => {
+  if (enterprise.value) {
+    router.push(`/inspection/create?enterpriseId=${enterprise.value.id}`)
   }
 }
 </script>
@@ -157,6 +236,25 @@ const doSearch = async () => {
 .search-input-wrap input::placeholder {
   color: #CBD5E1;
 }
+.btn-scan-icon {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+.btn-scan-icon:hover {
+  background: #F1F5F9;
+}
+.btn-scan-icon:active {
+  background: #E2E8F0;
+}
 .btn-search {
   height: 44px;
   padding: 0 20px;
@@ -197,8 +295,8 @@ const doSearch = async () => {
 }
 .tag {
   font-size: 11px;
-  background: #E0E7FF;
-  color: #5B7FFF;
+  background: #FAE7EA;
+  color: #C8102E;
   padding: 2px 8px;
   border-radius: 6px;
 }
@@ -225,6 +323,29 @@ const doSearch = async () => {
   max-width: 60%;
 }
 
+.scan-tip {
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.mock-scan-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.btn-mock-scan {
+  padding: 8px 16px;
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px dashed #CBD5E1;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  cursor: pointer;
+}
 .empty-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -236,5 +357,24 @@ const doSearch = async () => {
   gap: 8px;
   color: #CBD5E1;
   font-size: 14px;
+}
+.btn-inspect {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #D5263D, #B00E24);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.btn-inspect:active {
+  opacity: 0.9;
 }
 </style>
